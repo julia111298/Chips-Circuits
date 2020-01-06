@@ -12,6 +12,3 @@ joe
 
 
 another joe
-
-## In toms branch
-Dit is een test in tomsbranch
