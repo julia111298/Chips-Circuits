@@ -34,86 +34,83 @@ for number, x, y in reader:
     listje = [x, y, 0]
     gate_coordinates.append(listje)
 
-print("GATE COORDINATES")
-print(gate_coordinates)
+for chip1, chip2 in netlist:
+    try:
+        gate_1 = int(chip1)
+        gate_2 = int(chip2)
 
-# For first connection
-first_connection = netlist[7]
-gate_1 = first_connection[0]
-gate_2 = first_connection[1]
+        coordinate_start = gate_coordinates[gate_1]
+        coordinate_end = gate_coordinates[gate_2]
+        print("BEGIN COORDINATE")
+        print(coordinate_start)
+        print("END COORDINATE")
+        print(coordinate_end)
 
-print(gate_1)
-print(gate_2)
-gate_1 = int(gate_1)
-gate_2 = int(gate_2)
-coordinate_start = gate_coordinates[gate_1]
-coordinate_end = gate_coordinates[gate_2]
-print(gate_coordinates[gate_1])
-print(gate_coordinates[gate_2])
+        x_coordinate_1 = int(coordinate_start[0])
+        y_coordinate_1 = int(coordinate_start[1])
+        z_coordinate_1 = int(coordinate_start[2])
 
-x_coordinate_1 = int(coordinate_start[0])
-y_coordinate_1 = int(coordinate_start[1])
-z_coordinate_1 = int(coordinate_start[2])
+        x_coordinate_2 = int(coordinate_end[0])
+        y_coordinate_2 = int(coordinate_end[1])
+        z_coordinate_2 = int(coordinate_end[2])
 
-x_coordinate_2 = int(coordinate_end[0])
-y_coordinate_2 = int(coordinate_end[1])
-z_coordinate_2 = int(coordinate_end[2])
+        wires = []
 
-wires = []
-
-while coordinate_start != coordinate_end:
-    if x_coordinate_1 < x_coordinate_2:
-        step_x = 1
-    elif x_coordinate_1 > x_coordinate_2:
-        step_x = -1
-
-    if y_coordinate_1 < y_coordinate_2:
-        step_y = 1
-    elif y_coordinate_1 > y_coordinate_2:
-        step_y = -1
-    
-    wires.append(coordinate_start)
-    
-    while x_coordinate_1 != x_coordinate_2:
-        x_coordinate_1 = x_coordinate_1 + step_x
-        coordinate_start = [x_coordinate_1, y_coordinate_1, z_coordinate_1]
-        if coordinate_start in gate_coordinates and coordinate_start != coordinate_end:
-            x_coordinate_1 = x_coordinate_1 - step_x
-            # z kan nu niet meerdere stappen omhoog/omlaag
-            z_coordinate_1 = z_coordinate_1 + 1
-            #checken of na deze stap geen gate zit
-        
-        coordinate_start = [x_coordinate_1, y_coordinate_1, z_coordinate_1]
-        # if coordinate gelijk aan andere: doe - step_x en y_coordinate + step_y
-        wires.append(coordinate_start)
-        
-        if x_coordinate_1 == x_coordinate_2 and y_coordinate_1 == y_coordinate_2:
-            while z_coordinate_1 != z_coordinate_2:
-                z_coordinate_1 = z_coordinate_1 - 1
-                coordinate_start = [x_coordinate_1, y_coordinate_1, z_coordinate_1]
-                wires.append(coordinate_start)
-
-        
-
-    while y_coordinate_1 != y_coordinate_2:
-        y_coordinate_1 = y_coordinate_1 + step_y
-        coordinate_start = [x_coordinate_1, y_coordinate_1, z_coordinate_1]
-        if coordinate_start in gate_coordinates and coordinate_start != coordinate_end:
-            y_coordinate_1 = y_coordinate_1 - step_y
-            # z kan nu niet meerdere stappen omhoog/omlaag
-            z_coordinate_1 = z_coordinate_1 + 1
-            #checken of na deze stap geen gate zit
-        
-        coordinate_start = [x_coordinate_1, y_coordinate_1, z_coordinate_1]
-        # if coordinate gelijk aan andere: doe - step_y en x_coordinate + step_x
-        wires.append(coordinate_start)
+        while coordinate_start != coordinate_end:
+            if x_coordinate_1 < x_coordinate_2:
+                step_x = 1
+            elif x_coordinate_1 > x_coordinate_2:
+                step_x = -1
             
-        if x_coordinate_1 == x_coordinate_2 and y_coordinate_1 == y_coordinate_2:
-            while z_coordinate_1 != z_coordinate_2:
-                z_coordinate_1 = z_coordinate_1 - 1
+            if y_coordinate_1 < y_coordinate_2:
+                step_y = 1
+            elif y_coordinate_1 > y_coordinate_2:
+                step_y = -1
+    
+            wires.append(coordinate_start)
+    
+            while x_coordinate_1 != x_coordinate_2:
+                x_coordinate_1 = x_coordinate_1 + step_x
                 coordinate_start = [x_coordinate_1, y_coordinate_1, z_coordinate_1]
+                if coordinate_start in gate_coordinates and coordinate_start != coordinate_end:
+                    x_coordinate_1 = x_coordinate_1 - step_x
+                    # z kan nu niet meerdere stappen omhoog/omlaag
+                    z_coordinate_1 = z_coordinate_1 + 1
+                    #checken of na deze stap geen gate zit
+        
+                coordinate_start = [x_coordinate_1, y_coordinate_1, z_coordinate_1]
+                # if coordinate gelijk aan andere: doe - step_x en y_coordinate + step_y
                 wires.append(coordinate_start)
+        
+                if x_coordinate_1 == x_coordinate_2 and y_coordinate_1 == y_coordinate_2:
+                    while z_coordinate_1 != z_coordinate_2:
+                        z_coordinate_1 = z_coordinate_1 - 1
+                        coordinate_start = [x_coordinate_1, y_coordinate_1, z_coordinate_1]
+                        wires.append(coordinate_start)
 
         
 
-print(wires)
+            while y_coordinate_1 != y_coordinate_2:
+                y_coordinate_1 = y_coordinate_1 + step_y
+                coordinate_start = [x_coordinate_1, y_coordinate_1, z_coordinate_1]
+                if coordinate_start in gate_coordinates and coordinate_start != coordinate_end:
+                    y_coordinate_1 = y_coordinate_1 - step_y
+                    # z kan nu niet meerdere stappen omhoog/omlaag
+                    z_coordinate_1 = z_coordinate_1 + 1
+                    #checken of na deze stap geen gate zit
+        
+                coordinate_start = [x_coordinate_1, y_coordinate_1, z_coordinate_1]
+                # if coordinate gelijk aan andere: doe - step_y en x_coordinate + step_x
+                wires.append(coordinate_start)
+            
+                if x_coordinate_1 == x_coordinate_2 and y_coordinate_1 == y_coordinate_2:
+                    while z_coordinate_1 != z_coordinate_2:
+                        z_coordinate_1 = z_coordinate_1 - 1
+                        coordinate_start = [x_coordinate_1, y_coordinate_1, z_coordinate_1]
+                        wires.append(coordinate_start)
+
+        
+        print("NEW WIRES")
+        print(wires)
+    except:
+        print("HELLO")
