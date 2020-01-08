@@ -166,7 +166,7 @@ for chips in distances:
                                 if coordinate != coordinate_end:
                                     z_coordinate_1 = z_coordinate_1 + 1
                                     # z kan nu niet meerdere stappen omhoog/omlaag
-                                    x_coordinate_1 = x_coordinate_1 + 1
+                                    x_coordinate_1 = x_coordinate_1 + step_x
                                     #checken of na deze stap geen gate zit
                                     break
                                     # moet ook uit while loop breken!
