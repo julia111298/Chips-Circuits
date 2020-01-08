@@ -27,14 +27,11 @@ reader = csv.reader(gates)
 gate_coordinates = []
 
 for number, x, y in reader:
-    try:
+    if x != " x":
         x = int(x)
         y = int(y)
-    except:
-        x = x
-        y = y
-    coordinates = [x, y, 0]
-    gate_coordinates.append(coordinates)
+        coordinates = [x, y, 0]
+        gate_coordinates.append(coordinates)
 
 # Create dictionary of gate connections with corresponding shortest distance
 distances = {}
@@ -45,9 +42,9 @@ for chip1, chip2 in netlist:
         gate_2 = int(chip2)
     
         connected_gate = (gate_1, gate_2)
-    
-        coordinate_start = gate_coordinates[gate_1]
-        coordinate_end = gate_coordinates[gate_2]
+        
+        coordinate_start = gate_coordinates[gate_1 - 1]
+        coordinate_end = gate_coordinates[gate_2 - 1]
     
         x_coordinate_1 = int(coordinate_start[0])
         y_coordinate_1 = int(coordinate_start[1])
@@ -56,7 +53,7 @@ for chip1, chip2 in netlist:
         y_coordinate_2 = int(coordinate_end[1])
     
         total_dist = abs(x_coordinate_1 - x_coordinate_2) + abs(y_coordinate_1 - y_coordinate_2)
-    
+
         distances.update({connected_gate: total_dist})
 
 # Sort connections from smallest to largest distance in dictionary
@@ -80,8 +77,8 @@ for chips in distances:
     
     connected_gate = (gate_1, gate_2)
 
-    coordinate = gate_coordinates[gate_1]
-    coordinate_end = gate_coordinates[gate_2]
+    coordinate = gate_coordinates[gate_1 - 1]
+    coordinate_end = gate_coordinates[gate_2 - 1]
 
     x_coordinate_1 = int(coordinate[0])
     y_coordinate_1 = int(coordinate[1])
@@ -162,9 +159,21 @@ for chips in distances:
                 while z_coordinate_1 != z_coordinate_2:
                     z_coordinate_1 = z_coordinate_1 - 1
                     coordinate = [x_coordinate_1, y_coordinate_1, z_coordinate_1]
-                    wires.append(coordinate)
+                    if gate_connections:
+                        for key in gate_connections:
+                            selected_wires = gate_connections[key]
+                            if coordinate in selected_wires or coordinate in gate_coordinates:
+                                if coordinate != coordinate_end:
+                                    z_coordinate_1 = z_coordinate_1 + 1
+                                    # z kan nu niet meerdere stappen omhoog/omlaag
+                                    x_coordinate_1 = x_coordinate_1 + 1
+                                    #checken of na deze stap geen gate zit
+                                    break
+                                    # moet ook uit while loop breken!
+                coordinate = [x_coordinate_1, y_coordinate_1, z_coordinate_1]
+                wires.append(coordinate)
                     
     gate_connections.update({connected_gate: wires})
 print(gate_connections)
 print("JOEJOE")
-print(gate_connections[(16,6)])
+print(gate_connections[(17,10)])
