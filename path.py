@@ -8,41 +8,24 @@ Finds the optimal paths between the chips
 from mpl_toolkits import mplot3d
 import numpy as np
 import matplotlib.pyplot as plt
+from code.classes import classes as classs
 
 import csv
 
-# Open file with netlist
-data = open("netlist_1.csv")
-reader = csv.reader(data)
-
-# Create netlist
-netlist = []
-
-for net_1, net_2 in reader:
-    net = (net_1, net_2)
-    netlist.append(net)
-
-# Open file with gates
-gates = open("pritn_1.csv")
-reader = csv.reader(gates)
+# Create netlist by loading file in class
+netlist = classs.Netlist("data/netlist_1.csv").netlist
 
 # Create list for gate coordinates
-gate_coordinates = []
-
-for number, x, y in reader:
-    if x != " x":
-        x = int(x)
-        y = int(y)
-        coordinates = [x, y, 0]
-        gate_coordinates.append(coordinates)
+gate_coordinates = classs.Gate_coordinate("data/pritn_1.csv").gate_coordinates
+print(gate_coordinates)
 
 # Create dictionary of gate connections with corresponding shortest distance
 distances = {}
 
-for chip1, chip2 in netlist:
-    if chip1 != "chip_a":
-        gate_1 = int(chip1)
-        gate_2 = int(chip2)
+for item in netlist:
+    if True:
+        gate_1 = int(item.gate_1)
+        gate_2 = int(item.gate_2)
         
         # Create tuple for gates that have to be connected
         connected_gate = (gate_1, gate_2)
@@ -114,7 +97,7 @@ for chips in distances:
             step_y = -1
 
         # Append start coordinate to wire
-        wires.append(coordinate)
+        wires.append(classs.Wire(coordinate, connected_gate))
         
         # Loop until x-coordinate from start gate equals x-coordinate from end gate
         while x_coordinate_start != x_coordinate_end:
@@ -124,13 +107,22 @@ for chips in distances:
             if gate_connections:
                 for key in gate_connections:
                     selected_wires = gate_connections[key]
-                    if coordinate in selected_wires or coordinate in gate_coordinates:
-                        if coordinate != coordinate_end:
-                            x_coordinate_start = x_coordinate_start - step_x
-                            # z kan nu niet meerdere stappen omhoog/omlaag
-                            z_coordinate_start = z_coordinate_start + 1
-                            #checken of na deze stap geen gate zit
-                            break
+                    print("SELECTED WIRESSSSSS")
+                    print(selected_wires)
+                    print("Coordinate:  ")
+                    print(coordinate)
+                    
+                    
+                    
+                    
+                    if not coordinate == selected_wires[i].coordinate for i in range(10):
+                        if coordinate in selected_wires or coordinate in gate_coordinates:
+                            if coordinate != coordinate_end:
+                                x_coordinate_start = x_coordinate_start - step_x
+                                # z kan nu niet meerdere stappen omhoog/omlaag
+                                z_coordinate_start = z_coordinate_start + 1
+                                #checken of na deze stap geen gate zit
+                                break
                 coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                 if gate_connections:
                     for key in gate_connections:
@@ -290,7 +282,7 @@ for chips in distances:
                         #checken of na deze stap geen gate zit
             
             coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-            wires.append(coordinate)
+            wires.append(classs.Wire(coordinate, connected_gate))
             print(coordinate)
             
             if y_coordinate_start < y_coordinate_end:
@@ -541,7 +533,8 @@ for chips in distances:
                                     y_coordinate_start = y_coordinate_start - step_y
                                     #checken of na deze stap geen gate zit
                     coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                    wires.append(coordinate)
+                    wires.append(classs.Wire(coordinate, connected_gate))
+                    
                     
         if y_coordinate_start < y_coordinate_end:
             step_y = 1
@@ -721,7 +714,7 @@ for chips in distances:
                        #checken of na deze stap geen gate zit
 
            coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-           wires.append(coordinate)
+           wires.append(classs.Wire(coordinate, connected_gate))
            print(coordinate)
            
            if y_coordinate_start < y_coordinate_end:
@@ -972,10 +965,13 @@ for chips in distances:
                                    x_coordinate_start = x_coordinate_start - step_x
                                    #checken of na deze stap geen gate zit
                    coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                   wires.append(coordinate)
+                   wires.append(classs.Wire(coordinate, connected_gate))
                  
     count += 1         
     gate_connections.update({connected_gate: wires})
+    print("WIRESSSS")
+    print(wires)
+    # classs.Net(gate_1, gate_2, wires)
     if count > 27:
         break
 print(gate_connections)
@@ -1044,8 +1040,8 @@ for keys in gate_connections:
         colourcounter = 0
     for i in range(len(allconnectionlist)):
         try:
-            print("LineFromTo", allconnectionlist[i],  allconnectionlist[i + 1], colours[colourcounter]  )
-            draw_line(allconnectionlist[i], allconnectionlist[i+1], colours[colourcounter] )
+            print("LineFromTo", allconnectionlist[i].coordinate, "To",allconnectionlist[i + 1].coordinate )
+            draw_line(allconnectionlist[i].coordinate, allconnectionlist[i+1].coordinate, colours[colourcounter] )
             plt.pause(0.000001)
         except: 
             break
