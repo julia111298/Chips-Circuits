@@ -61,6 +61,7 @@ for chip1, chip2 in netlist:
 
 # Sort connections from smallest to largest distance in dictionary
 distances = list(distances.items())
+
 for max_number in range(len(distances)-1, -1, -1):
     swapped = False
     for count in range(max_number):
