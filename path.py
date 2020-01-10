@@ -8,6 +8,8 @@ Finds the optimal paths between the chips
 from mpl_toolkits import mplot3d
 import numpy as np
 import matplotlib.pyplot as plt
+# import random
+
 
 import csv
 
@@ -69,6 +71,8 @@ for max_number in range(len(distances)-1, -1, -1):
             swapped = True
     if not swapped:
         break
+
+# random.shuffle(distances)
 
 # Create dictionary of wires with connected gates
 gate_connections = {}
@@ -1010,9 +1014,10 @@ fig = plt.figure()
 ax = plt.axes(projection="3d")
 
 make_grid(8, 16)
-
+# plt.pause(3)
 for gate_coordinate in gate_coordinates: 
     set_gate(gate_coordinate)
+    plt.pause(0.03)
 
 allConnections = []
 colours = ['b','lightgreen','cyan','m','yellow','k', 'pink']
@@ -1030,10 +1035,9 @@ for keys in gate_connections:
         try:
             print("LineFromTo", allconnectionlist[i],  allconnectionlist[i + 1], colours[colourcounter]  )
             draw_line(allconnectionlist[i], allconnectionlist[i+1], colours[colourcounter] )
+            plt.pause(0.000001)
         except: 
             break
-
-
 
 ax.set_xlabel('x')
 ax.set_ylabel('y')
