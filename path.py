@@ -986,6 +986,15 @@ print(gate_connections)
 print("JOEJOE")
 # print(gate_connections[(17,10)])
 
+length = 0
+
+for key in gate_connections:
+    wire = gate_connections[key]
+    length = length + len(wire)
+    
+print("TOTAL LENGTH")
+print(length)
+
 
 def make_grid(layers, size):
     for i in range(layers): 
