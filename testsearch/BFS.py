@@ -23,9 +23,13 @@ class Graph():
     def add_edge(self, u, v):
         if str(u) in self.vertices and str(v) in self.vertices:
             for key, value in self.vertices.items():
+                print("@@: ", u, v) 
+                print(key)
                 if key == u:
+                    print("true1")
                     value.add_neighbour(v)
                 if key == v:
+                    print("true2")
                     value.add_neighbour(u)
             return True
         else:
@@ -50,20 +54,15 @@ class Graph():
 
             for v in node_u.neighbours:
                 node_v = self.vertices[v]
-                print("!", v, node_v.distance)
+                # print("!", v, node_v.distance)
                 if node_v.status == "unvisited":
                     queue.append(v)
-                    print("V: ", v)
+                    # print("V: ", v)
                     if node_v.distance > node_u.distance + 1:
                         node_v.distance = node_u.distance + 1
 
 
 grid = []
-# For 3D grid
-# for x in range(4):
-#     for y in range(4):
-#         for z in range(4):
-#             grid.append((x,y,z))
 for x in range(2):
     for y in range(2):
         grid.append((x,y))
@@ -72,38 +71,37 @@ g = Graph()
 a = Vertex("(0, 0)")
 g.add_vertex(a)
 
-# Or g.add_vertex(Vertex("B"))
-
-# but for-loop is better:
-# for i in range(ord("A"), ord("K")):
-#     g.add_vertex(Vertex(chr(i)))
 
 for i in grid:
     g.add_vertex(Vertex(str(i)))
     
 
-edges = ["(0, 0)(1, 0)", "(0, 0)(0, 1)", "(1, 1)(0, 1)", "(1, 1)(1, 0)"]
+edges = []
+for i in grid:
+    edges.append(i)
+
+new = []
+
 for i in edges:
-    g.add_edge(i[:6], i[6:])
+    for j in grid:
+        if abs(j[0] - i[0]) == 1 and j[1] - i[1] == 0:
+            if (j,i) not in new:
+                new.append((i,j))
+        elif abs(j[1] - i[1]) == 1 and j[0] - i[0] == 0:
+            if (j,i) not in new:
+                new.append((i,j))
 
-# for i in range(len(grid)):
-#     print(grid[i + 1])
-#     break
+for i in new:
+    g.add_edge(str(i[0]), str(i[1]))
 
-# print(grid)
-# edges = []
-# for i in grid:
-#     edges.append(i)
+print()
 
-# new = []
 
-# for i in edges:
-#     for j in grid:
-#         if j[0] - i[0] == 1 or j[0] - i[0] == -1 and j[1] - i[1] == 0:
-#             if j[1] - i[1] == 1 or j[1] - i[1] == -1 and j[0] - i[0] == 0:
-#                 new.append((i,j))
 
-# print(new)
+
+
+print(g.vertices)
+
 
 g.bfs(a)
 g.print_graph()        
