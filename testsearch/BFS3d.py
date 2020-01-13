@@ -35,6 +35,23 @@ class Graph():
         for key in sorted(list(self.vertices.keys())):
             print(key + str(self.vertices[key].neighbours) + " " + str(self.vertices[key].distance))
     
+    def path(self, goal):
+        dist = self.vertices[goal].distance
+        path = [goal]
+        for i in self.vertices:
+            for j in self.vertices[goal].neighbours:
+
+                # Nog een random heuristiek
+                if self.vertices[j].distance == dist - 1:
+                    # print(self.vertices[j])
+                    for k in self.vertices.items():
+                        if self.vertices[j] == k[1]:
+                            goal = str(k[0])
+                            path.append(goal)
+                    dist -= 1
+
+        return path
+
     def bfs(self, node):
         queue = list()
         node.distance = 0
@@ -56,9 +73,10 @@ class Graph():
 
 
 grid1 = []
-for x in range(3):
-    for y in range(3):
-        for z in range(3):
+size = 3
+for x in range(size):
+    for y in range(size):
+        for z in range(size):
             grid1.append((x,y,z))
 
 g = Graph()
@@ -71,25 +89,10 @@ for i in grid1:
     
 
 grid2 = []
-grid3 = []
 for i in grid1:
     grid2.append(i)
-    grid3.append(i)
 
 edges = []
-print(grid1)
-# for i in grid1:
-#     for j in grid2:
-#         for k in grid3:
-#             if abs(j[0] - i[0] - k[0]) == 1 and j[1] - i[1] - k[1] == 0 and k[2] - j[2] - i[2] == 0:
-#                 if (i,j,k) not in edges:
-#                     edges.append((i,j,k))
-#             elif abs(j[1] - i[1] - k[1]) == 1 and j[0] - i[0] - k[0] == 0 and k[2] - j[2] - i[2] == 0:
-#                 if (i,j,k) not in edges:
-#                     edges.append((i,j,k))
-#             elif abs(j[2] - i[2] - k[2]) == 1 and j[0] - i[0] - k[0] == 0 and k[1] - j[1] - i[1] == 0:
-#                 if (i,j,k) not in edges:
-#                     edges.append((i,j,k))
 
 for i in grid1:
     for j in grid2:
@@ -104,8 +107,6 @@ for i in grid1:
                 edges.append((i,j))
 print("#@ edges: ", len(edges))
 
-# for i in edges:
-#     g.add_edge(str(i[0]), str(i[1]), str(i[2]))
 
 # edges = ["(0, 0, 0) (0, 1, 0)", "(0, 0, 0) (1, 0, 0)", "(0, 0, 0) (0, 0, 1)", "(1, 0, 0) (1, 1, 0)", "(1, 0, 0) (1, 0, 1)", "(0, 1, 0) (0, 1, 1)", "(0, 1, 0) (1, 1, 0)", "(1, 1, 0) (1, 1, 1)"]
 for i in edges:
@@ -113,13 +114,11 @@ for i in edges:
 
 print()
 
-
-
-
 print(g.vertices)
 
 
 g.bfs(a)
-g.print_graph()        
+g.print_graph() 
+print(g.path("(2, 2, 2)"))     
 
     
