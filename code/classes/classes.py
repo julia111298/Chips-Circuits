@@ -10,7 +10,7 @@ class Wire():
         
     def __repr__(self):
         return f"{self.coordinate}, {self.net}"
-        
+
 class Gate_coordinate():
     def __init__(self, gate_file):
         self.gate_coordinates = self.load_gates(gate_file)
@@ -36,7 +36,7 @@ class Net():
         self.gate_2 = gate_2
         self.wires = []
         
-    def create_wires(wire):
+    def create_wires(self, wire):
         self.wires.append(wire)
         
     def get_wire():
