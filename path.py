@@ -159,11 +159,7 @@ for chips in distances:
             if gate_connections:
                 for key in gate_connections:
                     selected_wires = gate_connections[key]
-                    # print("SELECTED WIRESSSSSS")
-                    # print(selected_wires)
- #                    print("Coordinate:  ")
- #                    print(coordinate)
-                    if coordinate in selected_wires or coordinate in gate_coordinates:
+                    if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                         if coordinate != coordinate_end:
                             x_coordinate_start = x_coordinate_start - step_x
                             # z kan nu niet meerdere stappen omhoog/omlaag
@@ -174,7 +170,7 @@ for chips in distances:
                 if gate_connections:
                     for key in gate_connections:
                         selected_wires = gate_connections[key]
-                        if coordinate in selected_wires or coordinate in gate_coordinates:
+                        if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                             if coordinate != coordinate_end:
                                 z_coordinate_start = z_coordinate_start - 1
                                 # z kan nu niet meerdere stappen omhoog/omlaag
@@ -185,7 +181,7 @@ for chips in distances:
                     if gate_connections:
                         for key in gate_connections:
                             selected_wires = gate_connections[key]
-                            if coordinate in selected_wires or coordinate in gate_coordinates:
+                            if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                 if coordinate != coordinate_end:
                                     y_coordinate_start = y_coordinate_start - step_y - step_y
                                     # z kan nu niet meerdere stappen omhoog/omlaag
@@ -194,7 +190,7 @@ for chips in distances:
                         if gate_connections:
                             for key in gate_connections:
                                 selected_wires = gate_connections[key]
-                                if coordinate in selected_wires or coordinate in gate_coordinates:
+                                if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                     if coordinate != coordinate_end:
                                         y_coordinate_start = y_coordinate_start + step_y
                                         # z kan nu niet meerdere stappen omhoog/omlaag
@@ -213,7 +209,7 @@ for chips in distances:
                         if gate_connections:
                             for key in gate_connections:
                                 selected_wires = gate_connections[key]
-                                if coordinate in selected_wires or coordinate in gate_coordinates:
+                                if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                     if coordinate != coordinate_end:
                                         y_coordinate_start = y_coordinate_start + step_y
                                         # z kan nu niet meerdere stappen omhoog/omlaag
@@ -234,7 +230,7 @@ for chips in distances:
                     if gate_connections:
                         for key in gate_connections:
                             selected_wires = gate_connections[key]
-                            if coordinate in selected_wires or coordinate in gate_coordinates:
+                            if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                 if coordinate != coordinate_end:
                                     y_coordinate_start = y_coordinate_start + step_y
                                     # z kan nu niet meerdere stappen omhoog/omlaag
@@ -255,7 +251,7 @@ for chips in distances:
                 if gate_connections:
                     for key in gate_connections:
                         selected_wires = gate_connections[key]
-                        if coordinate in selected_wires or coordinate in gate_coordinates:
+                        if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                             if coordinate != coordinate_end:
                                 z_coordinate_start = z_coordinate_start - 1
                                 # z kan nu niet meerdere stappen omhoog/omlaag
@@ -266,7 +262,7 @@ for chips in distances:
                     if gate_connections:
                         for key in gate_connections:
                             selected_wires = gate_connections[key]
-                            if coordinate in selected_wires or coordinate in gate_coordinates:
+                            if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                 if coordinate != coordinate_end:
                                     y_coordinate_start = y_coordinate_start - step_y - step_y
                                     # z kan nu niet meerdere stappen omhoog/omlaag
@@ -275,7 +271,7 @@ for chips in distances:
                         if gate_connections:
                             for key in gate_connections:
                                 selected_wires = gate_connections[key]
-                                if coordinate in selected_wires or coordinate in gate_coordinates:
+                                if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                     if coordinate != coordinate_end:
                                         y_coordinate_start = y_coordinate_start + step_y
                                         # z kan nu niet meerdere stappen omhoog/omlaag
@@ -294,7 +290,7 @@ for chips in distances:
                         if gate_connections:
                             for key in gate_connections:
                                 selected_wires = gate_connections[key]
-                                if coordinate in selected_wires or coordinate in gate_coordinates:
+                                if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                     if coordinate != coordinate_end:
                                         y_coordinate_start = y_coordinate_start + step_y
                                         # z kan nu niet meerdere stappen omhoog/omlaag
@@ -315,7 +311,7 @@ for chips in distances:
                     if gate_connections:
                         for key in gate_connections:
                             selected_wires = gate_connections[key]
-                            if coordinate in selected_wires or coordinate in gate_coordinates:
+                            if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                 if coordinate != coordinate_end:
                                     y_coordinate_start = y_coordinate_start + step_y
                                     # z kan nu niet meerdere stappen omhoog/omlaag
@@ -346,7 +342,7 @@ for chips in distances:
                     if gate_connections:
                         for key in gate_connections:
                             selected_wires = gate_connections[key]
-                            if coordinate in selected_wires or coordinate in gate_coordinates:
+                            if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                 if coordinate != coordinate_end:
                                     z_coordinate_start = z_coordinate_start + 1
                                     # z kan nu niet meerdere stappen omhoog/omlaag
@@ -358,7 +354,7 @@ for chips in distances:
                         if gate_connections:
                             for key in gate_connections:
                                 selected_wires = gate_connections[key]
-                                if coordinate in selected_wires or coordinate in gate_coordinates:
+                                if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                     if coordinate != coordinate_end:
                                         y_coordinate_start = y_coordinate_start - step_y
                                         # z kan nu niet meerdere stappen omhoog/omlaag
@@ -370,7 +366,7 @@ for chips in distances:
                             if gate_connections:
                                 for key in gate_connections:
                                     selected_wires = gate_connections[key]
-                                    if coordinate in selected_wires or coordinate in gate_coordinates:
+                                    if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                         if coordinate != coordinate_end:
                                             x_coordinate_start = x_coordinate_start - step_x - step_x
                                             # z kan nu niet meerdere stappen omhoog/omlaag
@@ -380,7 +376,7 @@ for chips in distances:
                                 if gate_connections:
                                     for key in gate_connections:
                                         selected_wires = gate_connections[key]
-                                        if coordinate in selected_wires or coordinate in gate_coordinates:
+                                        if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                             if coordinate != coordinate_end:
                                                 x_coordinate_start = x_coordinate_start + step_x
                                                 # z kan nu niet meerdere stappen omhoog/omlaag
@@ -400,7 +396,7 @@ for chips in distances:
                                 if gate_connections:
                                     for key in gate_connections:
                                         selected_wires = gate_connections[key]
-                                        if coordinate in selected_wires or coordinate in gate_coordinates:
+                                        if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                             if coordinate != coordinate_end:
                                                 x_coordinate_start = x_coordinate_start + step_x
                                                 # z kan nu niet meerdere stappen omhoog/omlaag
@@ -422,7 +418,7 @@ for chips in distances:
                             if gate_connections:
                                 for key in gate_connections:
                                     selected_wires = gate_connections[key]
-                                    if coordinate in selected_wires or coordinate in gate_coordinates:
+                                    if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                         if coordinate != coordinate_end:
                                             x_coordinate_start = x_coordinate_start - step_x - step_x
                                             # z kan nu niet meerdere stappen omhoog/omlaag
@@ -432,7 +428,7 @@ for chips in distances:
                                 if gate_connections:
                                     for key in gate_connections:
                                         selected_wires = gate_connections[key]
-                                        if coordinate in selected_wires or coordinate in gate_coordinates:
+                                        if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                             if coordinate != coordinate_end:
                                                 x_coordinate_start = x_coordinate_start + step_x
                                                 # z kan nu niet meerdere stappen omhoog/omlaag
@@ -452,7 +448,7 @@ for chips in distances:
                                 if gate_connections:
                                     for key in gate_connections:
                                         selected_wires = gate_connections[key]
-                                        if coordinate in selected_wires or coordinate in gate_coordinates:
+                                        if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                             if coordinate != coordinate_end:
                                                 x_coordinate_start = x_coordinate_start + step_x
                                                 # z kan nu niet meerdere stappen omhoog/omlaag
@@ -474,7 +470,7 @@ for chips in distances:
                         if gate_connections:
                             for key in gate_connections:
                                 selected_wires = gate_connections[key]
-                                if coordinate in selected_wires or coordinate in gate_coordinates:
+                                if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                     if coordinate != coordinate_end:
                                         y_coordinate_start = y_coordinate_start - step_y
                                         # z kan nu niet meerdere stappen omhoog/omlaag
@@ -486,7 +482,7 @@ for chips in distances:
                             if gate_connections:
                                 for key in gate_connections:
                                     selected_wires = gate_connections[key]
-                                    if coordinate in selected_wires or coordinate in gate_coordinates:
+                                    if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                         if coordinate != coordinate_end:
                                             x_coordinate_start = x_coordinate_start - step_x - step_x
                                             # z kan nu niet meerdere stappen omhoog/omlaag
@@ -496,7 +492,7 @@ for chips in distances:
                                 if gate_connections:
                                     for key in gate_connections:
                                         selected_wires = gate_connections[key]
-                                        if coordinate in selected_wires or coordinate in gate_coordinates:
+                                        if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                             if coordinate != coordinate_end:
                                                 x_coordinate_start = x_coordinate_start + step_x
                                                 # z kan nu niet meerdere stappen omhoog/omlaag
@@ -516,7 +512,7 @@ for chips in distances:
                                 if gate_connections:
                                     for key in gate_connections:
                                         selected_wires = gate_connections[key]
-                                        if coordinate in selected_wires or coordinate in gate_coordinates:
+                                        if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                             if coordinate != coordinate_end:
                                                 x_coordinate_start = x_coordinate_start + step_x
                                                 # z kan nu niet meerdere stappen omhoog/omlaag
@@ -538,7 +534,7 @@ for chips in distances:
                             if gate_connections:
                                 for key in gate_connections:
                                     selected_wires = gate_connections[key]
-                                    if coordinate in selected_wires or coordinate in gate_coordinates:
+                                    if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                         if coordinate != coordinate_end:
                                             x_coordinate_start = x_coordinate_start - step_x - step_x
                                             # z kan nu niet meerdere stappen omhoog/omlaag
@@ -548,7 +544,7 @@ for chips in distances:
                                 if gate_connections:
                                     for key in gate_connections:
                                         selected_wires = gate_connections[key]
-                                        if coordinate in selected_wires or coordinate in gate_coordinates:
+                                        if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                             if coordinate != coordinate_end:
                                                 x_coordinate_start = x_coordinate_start + step_x
                                                 # z kan nu niet meerdere stappen omhoog/omlaag
@@ -568,7 +564,7 @@ for chips in distances:
                                 if gate_connections:
                                     for key in gate_connections:
                                         selected_wires = gate_connections[key]
-                                        if coordinate in selected_wires or coordinate in gate_coordinates:
+                                        if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                             if coordinate != coordinate_end:
                                                 x_coordinate_start = x_coordinate_start + step_x
                                                 # z kan nu niet meerdere stappen omhoog/omlaag
@@ -600,7 +596,7 @@ for chips in distances:
            if gate_connections:
                for key in gate_connections:
                    selected_wires = gate_connections[key]
-                   if coordinate in selected_wires or coordinate in gate_coordinates:
+                   if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                        if coordinate != coordinate_end:
                            y_coordinate_start = y_coordinate_start - step_y
                            # z kan nu niet meerdere stappen omhoog/omlaag
@@ -611,7 +607,7 @@ for chips in distances:
                if gate_connections:
                    for key in gate_connections:
                        selected_wires = gate_connections[key]
-                       if coordinate in selected_wires or coordinate in gate_coordinates:
+                       if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                            if coordinate != coordinate_end:
                                z_coordinate_start = z_coordinate_start - 1
                                # z kan nu niet meerdere stappen omhoog/omlaag
@@ -622,7 +618,7 @@ for chips in distances:
                    if gate_connections:
                        for key in gate_connections:
                            selected_wires = gate_connections[key]
-                           if coordinate in selected_wires or coordinate in gate_coordinates:
+                           if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                if coordinate != coordinate_end:
                                    x_coordinate_start = x_coordinate_start - step_x - step_x
                                    # z kan nu niet meerdere stappen omhoog/omlaag
@@ -631,7 +627,7 @@ for chips in distances:
                        if gate_connections:
                            for key in gate_connections:
                                selected_wires = gate_connections[key]
-                               if coordinate in selected_wires or coordinate in gate_coordinates:
+                               if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                    if coordinate != coordinate_end:
                                        x_coordinate_start = x_coordinate_start + step_x
                                        # z kan nu niet meerdere stappen omhoog/omlaag
@@ -650,7 +646,7 @@ for chips in distances:
                        if gate_connections:
                            for key in gate_connections:
                                selected_wires = gate_connections[key]
-                               if coordinate in selected_wires or coordinate in gate_coordinates:
+                               if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                    if coordinate != coordinate_end:
                                        x_coordinate_start = x_coordinate_start + step_x
                                        # z kan nu niet meerdere stappen omhoog/omlaag
@@ -671,7 +667,7 @@ for chips in distances:
                    if gate_connections:
                        for key in gate_connections:
                            selected_wires = gate_connections[key]
-                           if coordinate in selected_wires or coordinate in gate_coordinates:
+                           if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                if coordinate != coordinate_end:
                                    x_coordinate_start = x_coordinate_start + step_x
                                    # z kan nu niet meerdere stappen omhoog/omlaag
@@ -692,7 +688,7 @@ for chips in distances:
                if gate_connections:
                    for key in gate_connections:
                        selected_wires = gate_connections[key]
-                       if coordinate in selected_wires or coordinate in gate_coordinates:
+                       if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                            if coordinate != coordinate_end:
                                z_coordinate_start = z_coordinate_start - 1
                                # z kan nu niet meerdere stappen omhoog/omlaag
@@ -703,7 +699,7 @@ for chips in distances:
                    if gate_connections:
                        for key in gate_connections:
                            selected_wires = gate_connections[key]
-                           if coordinate in selected_wires or coordinate in gate_coordinates:
+                           if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                if coordinate != coordinate_end:
                                    x_coordinate_start = x_coordinate_start - step_x - step_x
                                    # z kan nu niet meerdere stappen omhoog/omlaag
@@ -712,7 +708,7 @@ for chips in distances:
                        if gate_connections:
                            for key in gate_connections:
                                selected_wires = gate_connections[key]
-                               if coordinate in selected_wires or coordinate in gate_coordinates:
+                               if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                    if coordinate != coordinate_end:
                                        x_coordinate_start = x_coordinate_start + step_x
                                        # z kan nu niet meerdere stappen omhoog/omlaag
@@ -731,7 +727,7 @@ for chips in distances:
                        if gate_connections:
                            for key in gate_connections:
                                selected_wires = gate_connections[key]
-                               if coordinate in selected_wires or coordinate in gate_coordinates:
+                               if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                    if coordinate != coordinate_end:
                                        x_coordinate_start = x_coordinate_start + step_x
                                        # z kan nu niet meerdere stappen omhoog/omlaag
@@ -752,7 +748,7 @@ for chips in distances:
                    if gate_connections:
                        for key in gate_connections:
                            selected_wires = gate_connections[key]
-                           if coordinate in selected_wires or coordinate in gate_coordinates:
+                           if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                if coordinate != coordinate_end:
                                    x_coordinate_start = x_coordinate_start + step_x
                                    # z kan nu niet meerdere stappen omhoog/omlaag
@@ -783,7 +779,7 @@ for chips in distances:
                    if gate_connections:
                        for key in gate_connections:
                            selected_wires = gate_connections[key]
-                           if coordinate in selected_wires or coordinate in gate_coordinates:
+                           if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                if coordinate != coordinate_end:
                                    z_coordinate_start = z_coordinate_start + 1
                                    # z kan nu niet meerdere stappen omhoog/omlaag
@@ -795,7 +791,7 @@ for chips in distances:
                        if gate_connections:
                            for key in gate_connections:
                                selected_wires = gate_connections[key]
-                               if coordinate in selected_wires or coordinate in gate_coordinates:
+                               if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                    if coordinate != coordinate_end:
                                        x_coordinate_start = x_coordinate_start - step_x
                                        # z kan nu niet meerdere stappen omhoog/omlaag
@@ -807,7 +803,7 @@ for chips in distances:
                            if gate_connections:
                                for key in gate_connections:
                                    selected_wires = gate_connections[key]
-                                   if coordinate in selected_wires or coordinate in gate_coordinates:
+                                   if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                        if coordinate != coordinate_end:
                                            y_coordinate_start = y_coordinate_start - step_y - step_y
                                            # z kan nu niet meerdere stappen omhoog/omlaag
@@ -817,7 +813,7 @@ for chips in distances:
                                if gate_connections:
                                    for key in gate_connections:
                                        selected_wires = gate_connections[key]
-                                       if coordinate in selected_wires or coordinate in gate_coordinates:
+                                       if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                            if coordinate != coordinate_end:
                                                y_coordinate_start = y_coordinate_start + step_y
                                                # z kan nu niet meerdere stappen omhoog/omlaag
@@ -837,7 +833,7 @@ for chips in distances:
                                if gate_connections:
                                    for key in gate_connections:
                                        selected_wires = gate_connections[key]
-                                       if coordinate in selected_wires or coordinate in gate_coordinates:
+                                       if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                            if coordinate != coordinate_end:
                                                y_coordinate_start = y_coordinate_start + step_y
                                                # z kan nu niet meerdere stappen omhoog/omlaag
@@ -859,7 +855,7 @@ for chips in distances:
                            if gate_connections:
                                for key in gate_connections:
                                    selected_wires = gate_connections[key]
-                                   if coordinate in selected_wires or coordinate in gate_coordinates:
+                                   if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                        if coordinate != coordinate_end:
                                            y_coordinate_start = y_coordinate_start - step_y - step_y
                                            # z kan nu niet meerdere stappen omhoog/omlaag
@@ -869,7 +865,7 @@ for chips in distances:
                                if gate_connections:
                                    for key in gate_connections:
                                        selected_wires = gate_connections[key]
-                                       if coordinate in selected_wires or coordinate in gate_coordinates:
+                                       if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                            if coordinate != coordinate_end:
                                                y_coordinate_start = y_coordinate_start + step_y
                                                # z kan nu niet meerdere stappen omhoog/omlaag
@@ -889,7 +885,7 @@ for chips in distances:
                                if gate_connections:
                                    for key in gate_connections:
                                        selected_wires = gate_connections[key]
-                                       if coordinate in selected_wires or coordinate in gate_coordinates:
+                                       if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                            if coordinate != coordinate_end:
                                                y_coordinate_start = y_coordinate_start + step_y
                                                # z kan nu niet meerdere stappen omhoog/omlaag
@@ -911,7 +907,7 @@ for chips in distances:
                        if gate_connections:
                            for key in gate_connections:
                                selected_wires = gate_connections[key]
-                               if coordinate in selected_wires or coordinate in gate_coordinates:
+                               if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                    if coordinate != coordinate_end:
                                        x_coordinate_start = x_coordinate_start - step_x
                                        # z kan nu niet meerdere stappen omhoog/omlaag
@@ -923,7 +919,7 @@ for chips in distances:
                            if gate_connections:
                                for key in gate_connections:
                                    selected_wires = gate_connections[key]
-                                   if coordinate in selected_wires or coordinate in gate_coordinates:
+                                   if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                        if coordinate != coordinate_end:
                                            y_coordinate_start = y_coordinate_start - step_y - step_y
                                            # z kan nu niet meerdere stappen omhoog/omlaag
@@ -933,7 +929,7 @@ for chips in distances:
                                if gate_connections:
                                    for key in gate_connections:
                                        selected_wires = gate_connections[key]
-                                       if coordinate in selected_wires or coordinate in gate_coordinates:
+                                       if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                            if coordinate != coordinate_end:
                                                y_coordinate_start = y_coordinate_start + step_y
                                                # z kan nu niet meerdere stappen omhoog/omlaag
@@ -953,7 +949,7 @@ for chips in distances:
                                if gate_connections:
                                    for key in gate_connections:
                                        selected_wires = gate_connections[key]
-                                       if coordinate in selected_wires or coordinate in gate_coordinates:
+                                       if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                            if coordinate != coordinate_end:
                                                y_coordinate_start = y_coordinate_start + step_y
                                                # z kan nu niet meerdere stappen omhoog/omlaag
@@ -975,7 +971,7 @@ for chips in distances:
                            if gate_connections:
                                for key in gate_connections:
                                    selected_wires = gate_connections[key]
-                                   if coordinate in selected_wires or coordinate in gate_coordinates:
+                                   if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                        if coordinate != coordinate_end:
                                            y_coordinate_start = y_coordinate_start - step_y - step_y
                                            # z kan nu niet meerdere stappen omhoog/omlaag
@@ -985,7 +981,7 @@ for chips in distances:
                                if gate_connections:
                                    for key in gate_connections:
                                        selected_wires = gate_connections[key]
-                                       if coordinate in selected_wires or coordinate in gate_coordinates:
+                                       if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                            if coordinate != coordinate_end:
                                                y_coordinate_start = y_coordinate_start + step_y
                                                # z kan nu niet meerdere stappen omhoog/omlaag
@@ -1005,7 +1001,7 @@ for chips in distances:
                                if gate_connections:
                                    for key in gate_connections:
                                        selected_wires = gate_connections[key]
-                                       if coordinate in selected_wires or coordinate in gate_coordinates:
+                                       if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                                            if coordinate != coordinate_end:
                                                y_coordinate_start = y_coordinate_start + step_y
                                                # z kan nu niet meerdere stappen omhoog/omlaag
@@ -1025,7 +1021,8 @@ for chips in distances:
                    allwires.append(wire)
                    
         # Check whether wire isn't running into forever loop
-        if len(wires) > 50:
+        if len(wires) > 100:
+            break
             print("wires loooooop")
             x_coordinate_check = x_coordinate_end + step_x
             check_coordinate = [x_coordinate_check, y_coordinate_end, z_coordinate_end]
@@ -1050,7 +1047,7 @@ for chips in distances:
                             wire = classs.Wire([0, 0, 0], (0, 0))
                             allwires[i] = wire
                     break
-            x_coordinate_check = x_coordinate_check - step_x - step_x
+            x_coordinate_check = x_coordinate_end - step_x
             check_coordinate = [x_coordinate_check, y_coordinate_end, z_coordinate_end]
             for item in allwires:
                 print("wires loop2")
@@ -1073,9 +1070,8 @@ for chips in distances:
                             wire = classs.Wire([0, 0, 0], (0, 0))
                             allwires[i] = wire
                     break
-            x_coordinate_check = x_coordinate_check + step_x
             y_coordinate_check = y_coordinate_end + step_y
-            check_coordinate = [x_coordinate_check, y_coordinate_check, z_coordinate_end]
+            check_coordinate = [x_coordinate_end, y_coordinate_check, z_coordinate_end]
             for item in allwires:
                 print("wires loop3")
                 if item.coordinate == check_coordinate and item.net[0] != gate_end and item.net[1] != gate_end:
@@ -1097,10 +1093,33 @@ for chips in distances:
                             wire = classs.Wire([0, 0, 0], (0, 0))
                             allwires[i] = wire
                     break
-            y_coordinate_check = y_coordinate_check - step_y - step_y
-            check_coordinate = [x_coordinate_check, y_coordinate_check, z_coordinate_end]
+            y_coordinate_check = y_coordinate_end - step_y
+            check_coordinate = [x_coordinate_end, y_coordinate_check, z_coordinate_end]
             for item in allwires:
                 print("wires loop4")
+                if item.coordinate == check_coordinate and item.net[0] != gate_end and item.net[1] != gate_end:
+                    # Clear wires list
+                    wires = []
+                    
+                    print("YES")
+                    
+                    distances.append((item.net, 2))
+                    
+                    # Delete wire from gate connections dictionary
+                    del gate_connections[item.net]
+              
+                    # Delete blocking wire
+                    for i, item2 in enumerate(allwires):
+                        if item2.net == item.net:
+                            print("DELETE:")
+                            print(allwires[i])
+                            wire = classs.Wire([0, 0, 0], (0, 0))
+                            allwires[i] = wire
+                    break
+            z_coordinate_check = z_coordinate_end + 1
+            check_coordinate = [x_coordinate_end, y_coordinate_end, z_coordinate_check]
+            for item in allwires:
+                print("wires loop5")
                 if item.coordinate == check_coordinate and item.net[0] != gate_end and item.net[1] != gate_end:
                     # Clear wires list
                     wires = []
@@ -1130,8 +1149,8 @@ for chips in distances:
     print("ALL WIRES")
     print(allwires)
     print(net)
-    # if count > 36:
-   #      break
+    if count > 28:
+        break
 print(gate_connections)
 print(len(gate_connections))
 print("JOEJOE")
