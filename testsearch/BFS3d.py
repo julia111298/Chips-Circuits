@@ -37,6 +37,7 @@ def set_gate(crd):
     # Plot points
     ax.plot(PointX, PointY, PointZ, ls="None", marker="o", color='red')
 
+
 class Vertex():
     def __init__(self, name):
         self.name = name
@@ -114,6 +115,7 @@ class Graph():
 
 # Open file with netlist
 data = open("../data/example_net2.csv")
+
 reader = csv.reader(data)
 
 # Create netlist
@@ -124,7 +126,9 @@ for net_1, net_2 in reader:
     netlist.append(net)
 
 # Open file with gates
+
 gates = open("../data/example_prit2.csv")
+
 reader = csv.reader(gates)
 
 # Create list for gate coordinates
@@ -134,10 +138,12 @@ gate_coordinates = []
 gates = []
 
 
+
 fig = plt.figure()
 ax = plt.axes(projection="3d")
 
 make_grid(3, 3)
+
 
 for number, x, y in reader:
     if x != " x":
@@ -161,7 +167,9 @@ for x in range(size):
         for z in range(size):
             grid1.append((x,y,z))
 
+
 allWires = {}
+
 
 wire = [] 
 for net in netlist:
@@ -232,6 +240,7 @@ for net in netlist:
     print(g.path(end)) 
     for i in g.path(end):
         i = eval(i)
+
         wire.append(list(i))
         print("JOEJOE", list(i))
     print(wire)
@@ -246,6 +255,7 @@ for gate_coordinate in gates:
 # print(edges)
 print(len(edges))
 print(allWires)
+
 colours = ['b','lightgreen','cyan','m','yellow','k', 'pink']
 colourcounter = 0 
 # for i in range(len(allWires)):  
@@ -278,3 +288,4 @@ plt.show()
 # g.print_graph()
 # print(edges)
 print(len(edges))
+
