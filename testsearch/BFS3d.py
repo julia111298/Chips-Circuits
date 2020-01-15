@@ -85,7 +85,7 @@ class Graph():
 
 
 # Open file with netlist
-data = open("/home/izharhamer/mprog-theorie/Chips-Circuits/Unordered code first week/example_net2.csv")
+data = open("example_net2.csv")
 reader = csv.reader(data)
 
 # Create netlist
@@ -96,7 +96,7 @@ for net_1, net_2 in reader:
     netlist.append(net)
 
 # Open file with gates
-gates = open("/home/izharhamer/mprog-theorie/Chips-Circuits/Unordered code first week/example_prit2.csv")
+gates = open("example_prit2.csv")
 reader = csv.reader(gates)
 
 # Create list for gate coordinates
