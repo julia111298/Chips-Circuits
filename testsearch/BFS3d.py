@@ -3,10 +3,39 @@
 # 
 # Does not work with netlist yet.
 ########################################
-
-
-
 import csv
+from mpl_toolkits import mplot3d
+import numpy as np
+import matplotlib.pyplot as plt
+
+def make_grid(layers, size):
+    for i in range(layers): 
+        GridX = np.linspace(0, size, (size + 1))
+        GridY = np.linspace(0, size, (size + 1))
+        X, Y = np.meshgrid(GridX, GridY)
+        Z = (np.sin(np.sqrt(X ** 2 + Y ** 2)) * 0) + i
+        # Plot grid
+        # ax.plot_wireframe(X, Y, Z, lw=0.5,  color='grey')
+    #configure axes
+    ax.set_zlim3d(0, layers)
+    ax.set_xlim3d(0, size)
+    ax.set_ylim3d(0, size)
+
+# Enter coordinates as list with: [X, Y, Z]
+def draw_line(crdFrom, crdTo, colour):  
+    Xline = [crdFrom[0], crdTo[0]]
+    Yline = [crdFrom[1], crdTo[1]]
+    Zline = [crdFrom[2], crdTo[2]]
+    # Draw line
+    print("LineFromTo",crdFrom , "To",crdTo, colour)
+    ax.plot(Xline, Yline, Zline,lw=2,  color=colour, ms=12)
+
+def set_gate(crd):
+    PointX = [crd[0]]
+    PointY = [crd[1]]
+    PointZ = [crd[2]]
+    # Plot points
+    ax.plot(PointX, PointY, PointZ, ls="None", marker="o", color='red')
 
 
 class Vertex():
@@ -85,7 +114,8 @@ class Graph():
 
 
 # Open file with netlist
-data = open("example_net2.csv")
+data = open("../data/example_net2.csv")
+
 reader = csv.reader(data)
 
 # Create netlist
@@ -96,7 +126,9 @@ for net_1, net_2 in reader:
     netlist.append(net)
 
 # Open file with gates
-gates = open("example_prit2.csv")
+
+gates = open("../data/example_prit2.csv")
+
 reader = csv.reader(gates)
 
 # Create list for gate coordinates
@@ -104,6 +136,14 @@ gate_coordinates = []
 
 # Create list of coordinates that are not traversable
 gates = []
+
+
+
+fig = plt.figure()
+ax = plt.axes(projection="3d")
+
+make_grid(3, 3)
+
 
 for number, x, y in reader:
     if x != " x":
@@ -127,8 +167,11 @@ for x in range(size):
         for z in range(size):
             grid1.append((x,y,z))
 
-allWires = []
 
+allWires = {}
+
+
+wire = [] 
 for net in netlist:
     if net[0] == "chip_a":
         continue
@@ -197,13 +240,52 @@ for net in netlist:
     print(g.path(end)) 
     for i in g.path(end):
         i = eval(i)
-        allWires.append(list(i))
 
+        wire.append(list(i))
+        print("JOEJOE", list(i))
+    print(wire)
+    
+    allWires[str(wire[0])] = wire
+    wire = []
 
+for gate_coordinate in gates: 
+    set_gate(gate_coordinate)
+    plt.pause(0.03)
 # g.print_graph()
 # print(edges)
 print(len(edges))
 print(allWires)
-print()
-print(gates)
+
+colours = ['b','lightgreen','cyan','m','yellow','k', 'pink']
+colourcounter = 0 
+# for i in range(len(allWires)):  
+
+
+for keys in allWires:
+    allConnections = allWires[keys]
+    allconnectionlist = []
+    for listconnection in allConnections: 
+        allconnectionlist.append(listconnection)
+    if colourcounter < 6:
+        colourcounter += 1
+    else: 
+        colourcounter = 0
+    for i in range(len(allconnectionlist)):
+        try:
+            # print("LineFromTo", allWires[i], "To",allWires[i + 1] )
+            draw_line(allconnectionlist[i], allconnectionlist[i+1], colours[colourcounter] )
+            plt.pause(0.2)
+        except: 
+            break
+
+    
+
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.set_zlabel('z')
+
+plt.show()  
+# g.print_graph()
+# print(edges)
+print(len(edges))
 
