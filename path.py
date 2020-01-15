@@ -117,6 +117,8 @@ for chips in distances:
             for item_start in allwires:
                 if item_start.coordinate == coor and item_start.net[0] != gate_start and item_start.net[1] != gate_start:
                     distances.append((item_start.net, 2))
+                    print("hallo")
+                    print(distances)
 
                     # Delete wire from gate connections dictionary
                     del gate_connections[item_start.net]
@@ -133,13 +135,13 @@ for chips in distances:
                     break
     print("COUNT")
     print(count)
-    # # Create switch variable to switch start moving direction
-#     if count > len(netlist):
-#         # Reconnect deleted wires in switched direction
-#         switch_variable = 1
-#     else:
-#         switch_variable = 0
-    switch_variable = 0
+    
+    # Create switch variable to switch start moving direction
+    if count > len(netlist)+5:
+        # Reconnect deleted wires in switched direction
+        switch_variable = 1
+    else:
+        switch_variable = 0
     
     # Overwrite coordinate but save coordinate_begin in different variable        
     coordinate = coordinate_begin
@@ -1036,7 +1038,7 @@ for chips in distances:
                    allwires.append(wire)
                    
         # Check whether wire isn't running into forever loop
-        if len(wires) > 50:
+        if len(wires) > 100:
             print("wires loooooop")
             x_coordinate_check = x_coordinate_end + step_x
             check_coordinate = [x_coordinate_check, y_coordinate_end, z_coordinate_end]
@@ -1053,7 +1055,8 @@ for chips in distances:
                     print("YES")
                     
                     distances.append((item.net, 2))
-                    
+                    print("hallo")
+                    print(distances)
                     # Delete wire from gate connections dictionary
                     del gate_connections[item.net]
                     
@@ -1080,7 +1083,8 @@ for chips in distances:
                     print("YES")
                     
                     distances.append((item.net, 2))
-                    
+                    print("hallo")
+                    print(distances)
                     # Delete wire from gate connections dictionary
                     del gate_connections[item.net]
                     
@@ -1107,7 +1111,8 @@ for chips in distances:
                     print("YES")
                     
                     distances.append((item.net, 2))
-                    
+                    print("hallo")
+                    print(distances)
                     # Delete wire from gate connections dictionary
                     del gate_connections[item.net]
 
@@ -1134,7 +1139,8 @@ for chips in distances:
                     print("YES")
                     
                     distances.append((item.net, 2))
-                    
+                    print("hallo")
+                    print(distances)
                     # Delete wire from gate connections dictionary
                     del gate_connections[item.net]
               
@@ -1161,7 +1167,8 @@ for chips in distances:
                     print("YES")
                     
                     distances.append((item.net, 2))
-                    
+                    print("hallo")
+                    print(distances)
                     # Delete wire from gate connections dictionary
                     del gate_connections[item.net]
               
@@ -1190,8 +1197,10 @@ for chips in distances:
     net = classs.Net(gate_start, gate_end)
     net.create_wires(wires)
     gate_connections.update({connected_gate: wires})
-    if count > 36:
+    if count > 46:
         break
+    # if len(gate_connections) == len(netlist):
+   #      break
     print("ALL WIRES")
     print(allwires)
     print(net)
