@@ -1190,6 +1190,32 @@ for chips in distances:
             # Check y-coordinate first, then x-coordinate
             # Change value of switch variable to start moving in other direction
             switch_variable = 1
+        if len(wires) == 0:
+            print("delete2")
+            for counter in range(len(netlist)):
+                key = distances[counter][0]
+                print(gate_connections)
+                try:
+                    if len(gate_connections[key]) > distances[counter][1]*5:
+                        print("TOMM", count)
+                        wires = []
+                        x_coordinate_start = int(coordinate_begin[0])
+                        y_coordinate_start = int(coordinate_begin[1])
+                        z_coordinate_start = int(coordinate_begin[2])
+                        coordinate = coordinate_begin
+                
+                        distances.append((key, distances[counter][1]))
+                        # Delete wire from gate connections dictionary
+                        del gate_connections[key]
+          
+                        # Delete blocking wire
+                        for i, item2 in enumerate(allwires):
+                            if item2.net == key:
+                                print("TomJoe", allwires[i])
+                                wire = classs.Wire([0, 0, 0], (0, 0))
+                                allwires[i] = wire
+                except: 
+                    break
                
     count += 1         
     print("WIRESSSS")
@@ -1197,8 +1223,9 @@ for chips in distances:
     net = classs.Net(gate_start, gate_end)
     net.create_wires(wires)
     gate_connections.update({connected_gate: wires})
-    if count > 46:
+    if count > 34:
         break
+
     # if len(gate_connections) == len(netlist):
    #      break
     print("ALL WIRES")
