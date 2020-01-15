@@ -1,8 +1,6 @@
 """
 path.py
-
 Tom Kamstra, Izhar Hamer, Julia Linde
-
 Finds the optimal paths between the chips
 """
 from mpl_toolkits import mplot3d
@@ -131,14 +129,16 @@ for chips in distances:
                             wire = classs.Wire([0, 0, 0], (0, 0))
                             allwires[j] = wire
                     break
-    print("COUNT")
-    print(count)
+    
     # # Create switch variable to switch start moving direction
-#     if count > len(netlist):
-#         # Reconnect deleted wires in switched direction
-#         switch_variable = 1
-#     else:
-#         switch_variable = 0
+    # if count > len(netlist):
+    #     # Reconnect deleted wires in switched direction
+    #     switch_variable = 1
+    # else:
+    #     switch_variable = 0
+    
+ 
+    # Create switch variable to switch start moving direction
     switch_variable = 0
     
     # Overwrite coordinate but save coordinate_begin in different variable        
@@ -1036,7 +1036,7 @@ for chips in distances:
                    allwires.append(wire)
                    
         # Check whether wire isn't running into forever loop
-        if len(wires) > 50:
+        if len(wires) > 100:
             print("wires loooooop")
             x_coordinate_check = x_coordinate_end + step_x
             check_coordinate = [x_coordinate_check, y_coordinate_end, z_coordinate_end]
@@ -1190,12 +1190,11 @@ for chips in distances:
     net = classs.Net(gate_start, gate_end)
     net.create_wires(wires)
     gate_connections.update({connected_gate: wires})
-    if count > 36:
-        break
     print("ALL WIRES")
     print(allwires)
     print(net)
-    
+    if count > 36:
+        break
 print(gate_connections)
 print(len(gate_connections))
 print("JOEJOE")
