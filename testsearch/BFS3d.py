@@ -1,3 +1,4 @@
+
 ########################################
 # Breadth first search algorithm
 # 
@@ -7,7 +8,6 @@
 
 
 import csv
-
 
 class Vertex():
     def __init__(self, name):
@@ -22,6 +22,7 @@ class Vertex():
             self.neighbours.sort()
 
 class Graph():
+
     def __init__(self):
         self.vertices = {}
 
@@ -53,6 +54,7 @@ class Graph():
         path = [goal]
         for i in self.vertices:
             for j in self.vertices[goal].neighbours:
+
                 # Nog een random heuristiek
                 if self.vertices[j].distance == dist - 1:
                     # print(self.vertices[j])
@@ -121,12 +123,11 @@ print("netlist: ", netlist)
 print("gate crds: ", gate_coordinates)
 
 grid1 = []
-size = 4
+size = 3
 for x in range(size):
     for y in range(size):
         for z in range(size):
             grid1.append((x,y,z))
-
 
 
 for net in netlist:

@@ -8,40 +8,59 @@ Finds the optimal paths between the chips
 from mpl_toolkits import mplot3d
 import numpy as np
 import matplotlib.pyplot as plt
-from code.classes import classes as classs
+import random
 
 import csv
 
-# Create netlist by loading file in class
-netlist = classs.Netlist("data/netlist_1.csv").netlist
+# Open file with netlist
+data = open("example_net2.csv")
+reader = csv.reader(data)
+
+# Create netlist
+netlist = []
+
+for net_1, net_2 in reader:
+    net = (net_1, net_2)
+    netlist.append(net)
+
+# Open file with gates
+gates = open("example_prit2.csv")
+reader = csv.reader(gates)
 
 # Create list for gate coordinates
-gate_coordinates = classs.Gate_coordinate("data/pritn_1.csv").gate_coordinates
-print(gate_coordinates)
+gate_coordinates = []
+
+for number, x, y in reader:
+    if x != " x":
+        x = int(x)
+        y = int(y)
+        coordinates = [x, y, 0]
+        gate_coordinates.append(coordinates)
 
 # Create dictionary of gate connections with corresponding shortest distance
 distances = {}
 
-for item in netlist:
-    gate_start = int(item.gate_1)
-    gate_end = int(item.gate_2)
+for chip1, chip2 in netlist:
+    if chip1 != "chip_a":
+        gate_1 = int(chip1)
+        gate_2 = int(chip2)
+        
+        # Create tuple for gates that have to be connected
+        connected_gate = (gate_1, gate_2)
+        
+        coordinate_start = gate_coordinates[gate_1 - 1]
+        coordinate_end = gate_coordinates[gate_2 - 1]
     
-    # Create tuple for gates that have to be connected
-    connected_gate = (gate_start, gate_end)
+        x_coordinate_1 = int(coordinate_start[0])
+        y_coordinate_1 = int(coordinate_start[1])
+
+        x_coordinate_2 = int(coordinate_end[0])
+        y_coordinate_2 = int(coordinate_end[1])
     
-    coordinate_start = gate_coordinates[gate_start - 1]
-    coordinate_end = gate_coordinates[gate_end - 1]
+        # Calculate total shortest distance between gates
+        total_dist = abs(x_coordinate_1 - x_coordinate_2) + abs(y_coordinate_1 - y_coordinate_2)
 
-    x_coordinate_1 = int(coordinate_start[0])
-    y_coordinate_1 = int(coordinate_start[1])
-
-    x_coordinate_2 = int(coordinate_end[0])
-    y_coordinate_2 = int(coordinate_end[1])
-
-    # Calculate total shortest distance between gates
-    total_dist = abs(x_coordinate_1 - x_coordinate_2) + abs(y_coordinate_1 - y_coordinate_2)
-
-    distances.update({connected_gate: total_dist})
+        distances.update({connected_gate: total_dist})
 
 # Sort connections from smallest to largest distance in dictionary
 distances = list(distances.items())
@@ -53,16 +72,12 @@ for max_number in range(len(distances)-1, -1, -1):
             swapped = True
     if not swapped:
         break
+        
+random.shuffle(distances)
 
 # Create dictionary of wires with connected gates
 gate_connections = {}
 count = 0
-
-# Saves all wires
-allwires = []
-print("DISTT")
-print(distances)
-
 
 # Connect gates with eachother, starting with smallest distance
 for chips in distances:
@@ -89,50 +104,6 @@ for chips in distances:
     # Create list for wire coordinates
     wires = []
 
-    # Check whether wire can be made in at least one direction
-    x_coordinate_startcheck = x_coordinate_start + 1
-    coordinate_1 = [x_coordinate_startcheck, y_coordinate_start, z_coordinate_start]
-    x_coordinate_startcheck2 = x_coordinate_start - 1
-    coordinate_2 = [x_coordinate_startcheck2, y_coordinate_start, z_coordinate_start]
-    y_coordinate_startcheck = y_coordinate_start + 1
-    coordinate_3 = [x_coordinate_start, y_coordinate_startcheck, z_coordinate_start]
-    y_coordinate_startcheck2 = y_coordinate_start - 1
-    coordinate_4 = [x_coordinate_start, y_coordinate_startcheck2, z_coordinate_start]
-    z_coordinate_startcheck = z_coordinate_start + 1
-    coordinate_5 = [x_coordinate_start, y_coordinate_start, z_coordinate_startcheck]
-
-
-    coordinate_check = [coordinate_1, coordinate_2, coordinate_3, coordinate_4, coordinate_5]
-
-
-    all_coordinates = []
-    for coo in allwires:
-        all_coordinates.append(coo.get_coordinate())
-
-
-    result = all(elem in all_coordinates for elem in coordinate_check)
-
-    if result:
-        for coor in coordinate_check:
-            for item_start in allwires:
-                if item_start.coordinate == coor and item_start.net[0] != gate_start and item_start.net[1] != gate_start:
-                    distances.append((item_start.net, 2))
-
-                    # Delete wire from gate connections dictionary
-                    del gate_connections[item_start.net]
-
-                    print("This is deleted")
-                    print(item_start.net)
-                    # Delete blocking wire
-                    for j, item2_start in enumerate(allwires):
-                        if item2_start.net == item_start.net:
-                            # print("DELETE:")
-#                             print(allwires[i])
-                            wire = classs.Wire([0, 0, 0], (0, 0))
-                            allwires[j] = wire
-                    break
-                
-
     while coordinate != coordinate_end:
         # Determine direction in which wire has to move
         if x_coordinate_start < x_coordinate_end:
@@ -147,9 +118,6 @@ for chips in distances:
 
         # Append start coordinate to wire
         wires.append(coordinate)
-        print(coordinate)
-        wire = classs.Wire(coordinate, connected_gate)
-        allwires.append(wire)
         
         # Loop until x-coordinate from start gate equals x-coordinate from end gate
         while x_coordinate_start != x_coordinate_end:
@@ -159,10 +127,6 @@ for chips in distances:
             if gate_connections:
                 for key in gate_connections:
                     selected_wires = gate_connections[key]
-                    # print("SELECTED WIRESSSSSS")
-                    # print(selected_wires)
- #                    print("Coordinate:  ")
- #                    print(coordinate)
                     if coordinate in selected_wires or coordinate in gate_coordinates:
                         if coordinate != coordinate_end:
                             x_coordinate_start = x_coordinate_start - step_x
@@ -331,8 +295,6 @@ for chips in distances:
             coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
             wires.append(coordinate)
             print(coordinate)
-            wire = classs.Wire(coordinate, connected_gate)
-            allwires.append(wire)
             
             if y_coordinate_start < y_coordinate_end:
                 step_y = 1
@@ -583,10 +545,6 @@ for chips in distances:
                                     #checken of na deze stap geen gate zit
                     coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                     wires.append(coordinate)
-                    print(coordinate)
-                    wire = classs.Wire(coordinate, connected_gate)
-                    allwires.append(wire)
-                    
                     
         if y_coordinate_start < y_coordinate_end:
             step_y = 1
@@ -768,8 +726,6 @@ for chips in distances:
            coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
            wires.append(coordinate)
            print(coordinate)
-           wire = classs.Wire(coordinate, connected_gate)
-           allwires.append(wire)
            
            if y_coordinate_start < y_coordinate_end:
                step_y = 1
@@ -1020,131 +976,16 @@ for chips in distances:
                                    #checken of na deze stap geen gate zit
                    coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                    wires.append(coordinate)
-                   print(coordinate)
-                   wire = classs.Wire(coordinate, connected_gate)
-                   allwires.append(wire)
-                   
-        # Check whether wire isn't running into forever loop
-        if len(wires) > 50:
-            print("wires loooooop")
-            x_coordinate_check = x_coordinate_end + step_x
-            check_coordinate = [x_coordinate_check, y_coordinate_end, z_coordinate_end]
-            for item in allwires:
-                print("wires loop1")
-                if item.coordinate == check_coordinate and item.net[0] != gate_end and item.net[1] != gate_end:
-                    # Clear wires list
-                    wires = []
-                    
-                    print("YES")
-                    
-                    distances.append((item.net, 2))
-                    
-                    # Delete wire from gate connections dictionary
-                    del gate_connections[item.net]
-                    
-                    # Delete blocking wire
-                    for i, item2 in enumerate(allwires):
-                        if item2.net == item.net:
-                            print("DELETE:")
-                            print(allwires[i])
-                            wire = classs.Wire([0, 0, 0], (0, 0))
-                            allwires[i] = wire
-                    break
-            x_coordinate_check = x_coordinate_check - step_x - step_x
-            check_coordinate = [x_coordinate_check, y_coordinate_end, z_coordinate_end]
-            for item in allwires:
-                print("wires loop2")
-                if item.coordinate == check_coordinate and item.net[0] != gate_end and item.net[1] != gate_end:
-                    # Clear wires list
-                    wires = []
-                    
-                    print("YES")
-                    
-                    distances.append((item.net, 2))
-                    
-                    # Delete wire from gate connections dictionary
-                    del gate_connections[item.net]
-                    
-                    # Delete blocking wire
-                    for i, item2 in enumerate(allwires):
-                        if item2.net == item.net:
-                            print("DELETE:")
-                            print(allwires[i])
-                            wire = classs.Wire([0, 0, 0], (0, 0))
-                            allwires[i] = wire
-                    break
-            x_coordinate_check = x_coordinate_check + step_x
-            y_coordinate_check = y_coordinate_end + step_y
-            check_coordinate = [x_coordinate_check, y_coordinate_check, z_coordinate_end]
-            for item in allwires:
-                print("wires loop3")
-                if item.coordinate == check_coordinate and item.net[0] != gate_end and item.net[1] != gate_end:
-                    # Clear wires list
-                    wires = []
-                    
-                    print("YES")
-                    
-                    distances.append((item.net, 2))
-                    
-                    # Delete wire from gate connections dictionary
-                    del gate_connections[item.net]
-
-                    # Delete blocking wire
-                    for i, item2 in enumerate(allwires):
-                        if item2.net == item.net:
-                            print("DELETE:")
-                            print(allwires[i])
-                            wire = classs.Wire([0, 0, 0], (0, 0))
-                            allwires[i] = wire
-                    break
-            y_coordinate_check = y_coordinate_check - step_y - step_y
-            check_coordinate = [x_coordinate_check, y_coordinate_check, z_coordinate_end]
-            for item in allwires:
-                print("wires loop4")
-                if item.coordinate == check_coordinate and item.net[0] != gate_end and item.net[1] != gate_end:
-                    # Clear wires list
-                    wires = []
-                    
-                    print("YES")
-                    
-                    distances.append((item.net, 2))
-                    
-                    # Delete wire from gate connections dictionary
-                    del gate_connections[item.net]
-              
-                    # Delete blocking wire
-                    for i, item2 in enumerate(allwires):
-                        if item2.net == item.net:
-                            print("DELETE:")
-                            print(allwires[i])
-                            wire = classs.Wire([0, 0, 0], (0, 0))
-                            allwires[i] = wire
-                    break
-               
+        # test
+        # if len(wires) > 50:
+#             break
     count += 1         
-    print("WIRESSSS")
-    # print(wires)
-    net = classs.Net(gate_start, gate_end)
-    net.create_wires(wires)
     gate_connections.update({connected_gate: wires})
-    print("ALL WIRES")
-    print(allwires)
-    print(net)
-    # if count > 36:
-   #      break
+    # if count > 27:
+#         break
 print(gate_connections)
-print(len(gate_connections))
 print("JOEJOE")
-print("ALL WIRESSS")
-print(allwires[0].coordinate)
 # print(gate_connections[(17,10)])
-
-
-
-
-# TO DO
-# Verwijderde draadjes weer tekenen
-# Checken voor beginpunt en wires verwijderen
 
 length = 0
 
@@ -1208,7 +1049,7 @@ for keys in gate_connections:
         colourcounter = 0
     for i in range(len(allconnectionlist)):
         try:
-            print("LineFromTo", allconnectionlist[i], "To",allconnectionlist[i + 1] )
+            print("LineFromTo", allconnectionlist[i],  allconnectionlist[i + 1], colours[colourcounter]  )
             draw_line(allconnectionlist[i], allconnectionlist[i+1], colours[colourcounter] )
             plt.pause(0.000001)
         except: 
