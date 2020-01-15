@@ -1030,7 +1030,7 @@ for chips in distances:
             x_coordinate_check = x_coordinate_end + step_x
             check_coordinate = [x_coordinate_check, y_coordinate_end, z_coordinate_end]
             for item in allwires:
-                print("wires loop1")
+                print("wires loop1", item.coordinate, check_coordinate, item.net[0], item.net[1], gate_end)
                 if item.coordinate == check_coordinate and item.net[0] != gate_end and item.net[1] != gate_end:
                     # Clear wires list
                     wires = []
@@ -1050,10 +1050,10 @@ for chips in distances:
                             wire = classs.Wire([0, 0, 0], (0, 0))
                             allwires[i] = wire
                     break
-            x_coordinate_check = x_coordinate_check - step_x - step_x
+            x_coordinate_check = x_coordinate_end - step_x 
             check_coordinate = [x_coordinate_check, y_coordinate_end, z_coordinate_end]
             for item in allwires:
-                print("wires loop2")
+                print("wires loop2", item.coordinate, check_coordinate, item.net[0], item.net[1], gate_end)
                 if item.coordinate == check_coordinate and item.net[0] != gate_end and item.net[1] != gate_end:
                     # Clear wires list
                     wires = []
@@ -1077,7 +1077,7 @@ for chips in distances:
             y_coordinate_check = y_coordinate_end + step_y
             check_coordinate = [x_coordinate_check, y_coordinate_check, z_coordinate_end]
             for item in allwires:
-                print("wires loop3")
+                print("wires loop3", item.coordinate, check_coordinate, item.net[0], item.net[1], gate_end)
                 if item.coordinate == check_coordinate and item.net[0] != gate_end and item.net[1] != gate_end:
                     # Clear wires list
                     wires = []
@@ -1100,7 +1100,7 @@ for chips in distances:
             y_coordinate_check = y_coordinate_check - step_y - step_y
             check_coordinate = [x_coordinate_check, y_coordinate_check, z_coordinate_end]
             for item in allwires:
-                print("wires loop4")
+                print("wires loop4", item.coordinate, check_coordinate, item.net[0], item.net[1], gate_end)
                 if item.coordinate == check_coordinate and item.net[0] != gate_end and item.net[1] != gate_end:
                     # Clear wires list
                     wires = []

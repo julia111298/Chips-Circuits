@@ -31,6 +31,7 @@ def draw_line(crdFrom, crdTo, colour):
     Yline = [crdFrom[1], crdTo[1]]
     Zline = [crdFrom[2], crdTo[2]]
     # Draw line
+    print("LineFromTo",crdFrom , "To",crdTo, colour)
     ax.plot(Xline, Yline, Zline,lw=2,  color=colour, ms=12)
 
 def set_gate(crd):
