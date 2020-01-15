@@ -103,7 +103,7 @@ reader = csv.reader(gates)
 gate_coordinates = []
 
 # Create list of coordinates that are not traversable
-blocked = []
+gates = []
 
 for number, x, y in reader:
     if x != " x":
@@ -113,7 +113,7 @@ for number, x, y in reader:
         gate_coordinates.append("(" + str(coordinates).strip("[]") + ")")
 
         # What to do? deepcopy? normal copy?
-        blocked.append("(" + str(coordinates).strip("[]") + ")")
+        gates.append(coordinates)
 
 
 
@@ -204,3 +204,6 @@ for net in netlist:
 # print(edges)
 print(len(edges))
 print(allWires)
+print()
+print(gates)
+
