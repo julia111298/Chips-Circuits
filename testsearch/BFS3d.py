@@ -127,7 +127,7 @@ for x in range(size):
         for z in range(size):
             grid1.append((x,y,z))
 
-
+allWires = []
 
 for net in netlist:
     if net[0] == "chip_a":
@@ -194,8 +194,13 @@ for net in netlist:
 
     end = str(gate_coordinates[int(net[1]) - 1])
     # end = "(" + end.strip("[]") + ")"
-    print(g.path(end))     
+    print(g.path(end)) 
+    for i in g.path(end):
+        i = eval(i)
+        allWires.append(list(i))
+
 
 # g.print_graph()
-print(edges)
+# print(edges)
 print(len(edges))
+print(allWires)
