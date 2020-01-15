@@ -18,8 +18,8 @@ def make_grid(layers, size):
         # ax.plot_wireframe(X, Y, Z, lw=0.5,  color='grey')
     #configure axes
     ax.set_zlim3d(0, layers)
-    ax.set_xlim3d(0, size)
-    ax.set_ylim3d(0, size)
+    ax.set_xlim3d(-1, size)
+    ax.set_ylim3d(-1, size)
 
 # Enter coordinates as list with: [X, Y, Z]
 def draw_line(crdFrom, crdTo, colour):  
@@ -89,6 +89,7 @@ class Graph():
                         if self.vertices[j] == k[1]:
                             goal = str(k[0])
                             path.append(goal)
+
                     dist -= 1
 
         return path
@@ -142,7 +143,7 @@ gates = []
 fig = plt.figure()
 ax = plt.axes(projection="3d")
 
-make_grid(3, 3)
+make_grid(4, 4)
 
 
 for number, x, y in reader:
@@ -161,9 +162,9 @@ print("netlist: ", netlist)
 print("gate crds: ", gate_coordinates)
 
 grid1 = []
-size = 4
-for x in range(size):
-    for y in range(size):
+size = 5
+for x in range(-1, size):
+    for y in range(-1, size):
         for z in range(size):
             grid1.append((x,y,z))
 
@@ -171,7 +172,17 @@ for x in range(size):
 allWires = {}
 
 
+# Convert list to tuple
+def convert(list): 
+    return (*list, ) 
+
 wire = [] 
+
+blocked = []
+
+# For allWires keys
+tempCount = 0
+
 for net in netlist:
     if net[0] == "chip_a":
         continue
@@ -194,67 +205,95 @@ for net in netlist:
     grid2 = []
     for i in grid1:
         grid2.append(i)
-
+    
     edges = []
 
     for i in grid1:
         for j in grid2:
             if abs(j[0] - i[0]) == 1 and j[1] - i[1] == 0 and j[2] - i[2] ==0:    
                 if (j,i) not in edges:
-                    # if str(i) not in blocked and str(j) not in blocked:
-                    #     edges.append((i,j))
                     edges.append((i,j))
             elif abs(j[1] - i[1]) == 1 and j[0] - i[0] == 0 and j[2] - i[2] == 0:
                 if (j,i) not in edges:
-                    # if str(i) not in blocked and str(j) not in blocked:
-                    #     edges.append((i,j))
                     edges.append((i,j))
             elif abs(j[2] - i[2]) == 1 and j[0] - i[0] == 0 and j[1] - i[1] == 0:
                 if (j,i) not in edges:
-                    # if str(i) not in blocked and str(j) not in blocked:
-                    #     edges.append((i,j))
                     edges.append((i,j))
-    
+    # print(edges)
     # for i in range(len(edges)):
     #     if (0, 3, 0) == edges[i][0] or (0, 3, 0) == edges[i][1]:
     #         edges.pop(i)
         # print(edges[i])
     
-    for i in edges:
-        if (3, 1, 0) in i:
-            edges.remove(i)
-
     
+
+    end = str(gate_coordinates[int(net[1]) - 1])
+    
+
+
+    for i in gate_coordinates: 
+        i = eval(i) 
+        for j in edges:
+            # if eval(i) in j:
+            #     edges.remove(j)
+            if i in j:
+                if i != eval(start) and i != eval(end):
+                    edges.remove(j)
+                # for k in allWires:
+                #     for l in allWires[k]:
+                #         # print(allWires)
+                #         l = convert(l)
+                #         if l in j:
+                #             if j in edges:
+                #                 print("true", j)
+                                # edges.remove(j)
+                # else:
+                #     for k in allWires.items():
+                        # print("!!!!!!: : :", k)
+
+
+
+            else:
+                for k in blocked:
+                    if k in j:
+                        try:
+                            edges.remove(j)
+                        except:
+                            pass
+
+
+    # print(allWires, "allwiresss")
+        # print("joejoe: ", j)
+
     for i in edges:
         g.add_edge(str(i[0]), str(i[1]))
 
     print()
-
-
-
     g.bfs(a)
      
 
-    end = str(gate_coordinates[int(net[1]) - 1])
-    # end = "(" + end.strip("[]") + ")"
-    print(g.path(end)) 
-    for i in g.path(end):
-        i = eval(i)
-
-        wire.append(list(i))
-        print("JOEJOE", list(i))
-    print(wire)
     
-    allWires[str(wire[0])] = wire
+    # end = "(" + end.strip("[]") + ")"
+    # print(g.path(end))
+    # if g.path(end)[0] == "(3, 1, 0)":
+    #     print(edges) 
+    
+    for i in g.path(end):
+        
+        i = eval(i)
+        if i != eval(start) and i != eval(end):
+            blocked.append(i)
+        wire.append(list(i))
+
+    
+    allWires[str(tempCount)] = wire
+    tempCount += 1
     wire = []
 
 for gate_coordinate in gates: 
     set_gate(gate_coordinate)
     plt.pause(0.03)
-# g.print_graph()
-# print(edges)
-print(len(edges))
-print(allWires)
+
 
 colours = ['b','lightgreen','cyan','m','yellow','k', 'pink']
 colourcounter = 0 
@@ -274,18 +313,19 @@ for keys in allWires:
         try:
             # print("LineFromTo", allWires[i], "To",allWires[i + 1] )
             draw_line(allconnectionlist[i], allconnectionlist[i+1], colours[colourcounter] )
-            plt.pause(0.2)
+            plt.pause(0.05)
         except: 
-            break
-
-    
+            break    
 
 ax.set_xlabel('x')
 ax.set_ylabel('y')
 ax.set_zlabel('z')
 
-plt.show()  
+plt.show()
+
+   
 # g.print_graph()
 # print(edges)
 print(len(edges))
 
+print(len(allWires))
