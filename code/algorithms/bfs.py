@@ -103,7 +103,6 @@ class Graph():
             queue.append(i)
         
         while len(queue) > 0:
-            print(len(queue))
             node1 = self.vertices[queue.pop(0)]
             node1.status = "visited"
 
@@ -116,7 +115,7 @@ class Graph():
 
 
 # Open file with netlist
-data = open("../data/netlist_1.csv")
+data = open("../../data/example_net2.csv")
 
 reader = csv.reader(data)
 
@@ -129,7 +128,7 @@ for net_1, net_2 in reader:
 
 # Open file with gates
 
-gates = open("../data/pritn_1.csv")
+gates = open("../../data/example_prit2.csv")
 
 reader = csv.reader(gates)
 
@@ -144,7 +143,7 @@ gates = []
 fig = plt.figure()
 ax = plt.axes(projection="3d")
 
-make_grid(17, 7)
+make_grid(4, 4)
 
 
 for number, x, y in reader:
@@ -162,140 +161,148 @@ for number, x, y in reader:
 print("netlist: ", netlist)
 print("gate crds: ", gate_coordinates)
 
-grid1 = []
-size = 12
-for x in range(-1, 17):
-    for y in range(-1, size):
-        for z in range(8):
-            grid1.append((x,y,z))
-
-
-allWires = {}
-
-
 # Convert list to tuple
 def convert(list): 
     return (*list, ) 
 
-wire = [] 
+def BFS_Algo(netlist, gate_coordinates):
 
-blocked = []
-
-# For allWires keys
-tempCount = 0
-
-for net in netlist:
-    if net[0] == "chip_a":
-        continue
-    start = str(gate_coordinates[int(net[0]) - 1])
-
-    # niet meer nodig als ik het in het begin doe?
-    # start = "(" + start.strip("[]") + ")"
-
-    g = Graph()
-
-    # Add start gate
-    a = Vertex(start)
-    g.add_vertex(a)
+    grid1 = []
+    size = 5
+    for x in range(-1, size):
+        for y in range(-1, size):
+            for z in range(size):
+                grid1.append((x,y,z))
 
 
-    for i in grid1:
-        g.add_vertex(Vertex(str(i)))
+    allWires = {}
+
+
+    
+
+    wire = [] 
+
+    blocked = []
+
+    # For allWires keys
+    tempCount = 0
+
+    for net in netlist:
+        if net[0] == "chip_a":
+            continue
+        start = str(gate_coordinates[int(net[0]) - 1])
+
+        # niet meer nodig als ik het in het begin doe?
+        # start = "(" + start.strip("[]") + ")"
+
+        g = Graph()
+
+        # Add start gate
+        a = Vertex(start)
+        g.add_vertex(a)
+
+
+        for i in grid1:
+            g.add_vertex(Vertex(str(i)))
+            
+
+        grid2 = []
+        for i in grid1:
+            grid2.append(i)
+        
+        edges = []
+
+        for i in grid1:
+            for j in grid2:
+                if abs(j[0] - i[0]) == 1 and j[1] - i[1] == 0 and j[2] - i[2] ==0:    
+                    if (j,i) not in edges:
+                        edges.append((i,j))
+                elif abs(j[1] - i[1]) == 1 and j[0] - i[0] == 0 and j[2] - i[2] == 0:
+                    if (j,i) not in edges:
+                        edges.append((i,j))
+                elif abs(j[2] - i[2]) == 1 and j[0] - i[0] == 0 and j[1] - i[1] == 0:
+                    if (j,i) not in edges:
+                        edges.append((i,j))
+        # print(edges)
+        # for i in range(len(edges)):
+        #     if (0, 3, 0) == edges[i][0] or (0, 3, 0) == edges[i][1]:
+        #         edges.pop(i)
+            # print(edges[i])
+        
         
 
-    grid2 = []
-    for i in grid1:
-        grid2.append(i)
-    
-    edges = []
-
-    for i in grid1:
-        for j in grid2:
-            if abs(j[0] - i[0]) == 1 and j[1] - i[1] == 0 and j[2] - i[2] ==0:    
-                if (j,i) not in edges:
-                    edges.append((i,j))
-            elif abs(j[1] - i[1]) == 1 and j[0] - i[0] == 0 and j[2] - i[2] == 0:
-                if (j,i) not in edges:
-                    edges.append((i,j))
-            elif abs(j[2] - i[2]) == 1 and j[0] - i[0] == 0 and j[1] - i[1] == 0:
-                if (j,i) not in edges:
-                    edges.append((i,j))
-    print(i)
-    # print(edges)
-    # for i in range(len(edges)):
-    #     if (0, 3, 0) == edges[i][0] or (0, 3, 0) == edges[i][1]:
-    #         edges.pop(i)
-        # print(edges[i])
-    
-    
-
-    end = str(gate_coordinates[int(net[1]) - 1])
-    
-
-
-    for i in gate_coordinates: 
-        i = eval(i) 
-        for j in edges:
-            # if eval(i) in j:
-            #     edges.remove(j)
-            if i in j:
-                if i != eval(start) and i != eval(end):
-                    edges.remove(j)
-                # for k in allWires:
-                #     for l in allWires[k]:
-                #         # print(allWires)
-                #         l = convert(l)
-                #         if l in j:
-                #             if j in edges:
-                #                 print("true", j)
-                                # edges.remove(j)
-                # else:
-                #     for k in allWires.items():
-                        # print("!!!!!!: : :", k)
-
-
-
-            else:
-                for k in blocked:
-                    if k in j:
-                        try:
-                            edges.remove(j)
-                        except:
-                            pass
-
-
-    # print(allWires, "allwiresss")
-        # print("joejoe: ", j)
-
-    for i in edges:
-        g.add_edge(str(i[0]), str(i[1]))
-
-    print()
-    g.bfs(a)
-     
-
-    
-    # end = "(" + end.strip("[]") + ")"
-    # print(g.path(end))
-    # if g.path(end)[0] == "(3, 1, 0)":
-    #     print(edges) 
-    
-    for i in g.path(end):
+        end = str(gate_coordinates[int(net[1]) - 1])
         
-        i = eval(i)
-        if i != eval(start) and i != eval(end):
-            blocked.append(i)
-        wire.append(list(i))
 
-    
-    allWires[str(tempCount)] = wire
-    tempCount += 1
-    wire = []
+
+        for i in gate_coordinates: 
+            i = eval(i) 
+            for j in edges:
+                # if eval(i) in j:
+                #     edges.remove(j)
+                if i in j:
+                    if i != eval(start) and i != eval(end):
+                        edges.remove(j)
+                    # for k in allWires:
+                    #     for l in allWires[k]:
+                    #         # print(allWires)
+                    #         l = convert(l)
+                    #         if l in j:
+                    #             if j in edges:
+                    #                 print("true", j)
+                                    # edges.remove(j)
+                    # else:
+                    #     for k in allWires.items():
+                            # print("!!!!!!: : :", k)
+
+
+
+                else:
+                    for k in blocked:
+                        if k in j:
+                            try:
+                                edges.remove(j)
+                            except:
+                                pass
+
+
+        # print(allWires, "allwiresss")
+            # print("joejoe: ", j)
+
+        for i in edges:
+            g.add_edge(str(i[0]), str(i[1]))
+
+        print()
+        g.bfs(a)
+        
+
+        
+        # end = "(" + end.strip("[]") + ")"
+        # print(g.path(end))
+        # if g.path(end)[0] == "(3, 1, 0)":
+        #     print(edges) 
+        
+        for i in g.path(end):
+            
+            i = eval(i)
+            if i != eval(start) and i != eval(end):
+                blocked.append(i)
+            wire.append(list(i))
+
+        
+        allWires[str(tempCount)] = wire
+        tempCount += 1
+        wire = []
+
+        return allWires
 
 for gate_coordinate in gates: 
     set_gate(gate_coordinate)
     plt.pause(0.03)
 
+
+allWires = BFS_Algo(netlist, gate_coordinates)
+print(allWires)
 
 colours = ['b','lightgreen','cyan','m','yellow','k', 'pink']
 colourcounter = 0 
@@ -328,6 +335,6 @@ plt.show()
    
 # g.print_graph()
 # print(edges)
-print(len(edges))
+# print(len(edges))
 
 print(len(allWires))

@@ -5,6 +5,7 @@ Tom Kamstra, Izhar Hamer, Julia Linde
 
 Finds the optimal paths between the chips
 """
+from termcolor2 import c
 from mpl_toolkits import mplot3d
 import numpy as np
 import matplotlib.pyplot as plt
@@ -1226,7 +1227,9 @@ for key in gate_connections:
     length = length + len(wire)
     
 print("TOTAL LENGTH")
-print(length)
+# termcolor2
+
+# print c(length).red.on_white.blink.underline.dark
 
 
 def make_grid(layers, size):
@@ -1281,11 +1284,17 @@ for keys in gate_connections:
         colourcounter = 0
     for i in range(len(allconnectionlist)):
         try:
-            print("LineFromTo", allconnectionlist[i], "To",allconnectionlist[i + 1] )
+            print("LineFromTo", allconnectionlist[i], "To",allconnectionlist[i + 1],  colours[colourcounter])
             draw_line(allconnectionlist[i], allconnectionlist[i+1], colours[colourcounter] )
             plt.pause(0.000001)
         except: 
             break
+
+with open('output.csv', mode= 'w') as outputfile:
+    output_writer = csv.writer(outputfile, delimiter= ',')
+
+    for keys in gate_connections:
+        output_writer.writerow([keys, gate_connections[keys]])
 
 ax.set_xlabel('x')
 ax.set_ylabel('y')
