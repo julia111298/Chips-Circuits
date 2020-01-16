@@ -14,7 +14,7 @@ import copy
 import csv
 
 # Create netlist by loading file in class
-netlist = classs.Netlist("data/netlist_1.csv").netlist
+netlist = classs.Netlist("data/netlist_2.csv").netlist
 
 # Create list for gate coordinates
 gate_coordinates = classs.Gate_coordinate("data/pritn_1.csv").gate_coordinates
@@ -1366,15 +1366,15 @@ for chips in distances:
     # Delete part of wire when wire goes back and forth on one line
     if wires_length > 4:
         indices = []
-        for count in range(wires_length-2):
-            coor_1 = wires[count]
-            coor_2 = wires[count + 1]
-            coor_3 = wires[count + 2]
+        for counter in range(wires_length-2):
+            coor_1 = wires[counter]
+            coor_2 = wires[counter + 1]
+            coor_3 = wires[counter + 2]
 
             # Save indices of wires list
             if coor_1 == coor_3:
-                indices.append(count)
-                indices.append(count + 1)
+                indices.append(counter)
+                indices.append(counter + 1)
         
         # Delete wire coordinate with highest index first
         for delete_count in range(wires_length):
