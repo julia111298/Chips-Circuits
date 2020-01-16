@@ -32,7 +32,7 @@ def search(graph, begin, end):
         if current == end:
             break
 
-        for new in graph.edges(current):
+        for new in graph.neighbors(current):
             newCost = costUpdate[current] + graph.cost(current, new)
             if new not in costUpdate or newCost < costUpdate[new]:
                 costUpdate[new] = newCost
@@ -44,7 +44,7 @@ def search(graph, begin, end):
 
 
 start, goal = (0, 4), (7, 8)
-came_from, cost_so_far = a_star_search(diagram4, start, goal)
+came_from, cost_so_far = search(diagram4, start, goal)
 draw_grid(diagram4, width=3, point_to=came_from, start=start, goal=goal)
 print()
 draw_grid(diagram4, width=3, number=cost_so_far, start=start, goal=goal)
