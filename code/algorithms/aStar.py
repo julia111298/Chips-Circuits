@@ -1,3 +1,18 @@
+from helper import *
+
+class PriorityQueue:
+    def __init__(self):
+        self.elements = []
+    
+    def empty(self):
+        return len(self.elements) == 0
+    
+    def put(self, item, priority):
+        heapq.heappush(self.elements, (priority, item))
+    
+    def get(self):
+        return heapq.heappop(self.elements)[1]
+
 def heuristic(h1, h2):
     (x1, y1) = h1
     (x2, y2) = h2
@@ -5,7 +20,7 @@ def heuristic(h1, h2):
 
 def search(graph, begin, end):
     border = PriorityQueue()
-    border,put(begin, 0)
+    border.put(begin, 0)
     cameFrom = {}
     costUpdate = {}
     cameFrom[begin] = None
@@ -25,3 +40,12 @@ def search(graph, begin, end):
                 border.put(new, lead)
                 cameFrom[new] = current
     return cameFrom, costUpdate
+
+
+
+start, goal = (0, 4), (7, 8)
+came_from, cost_so_far = a_star_search(diagram4, start, goal)
+draw_grid(diagram4, width=3, point_to=came_from, start=start, goal=goal)
+print()
+draw_grid(diagram4, width=3, number=cost_so_far, start=start, goal=goal)
+print()
