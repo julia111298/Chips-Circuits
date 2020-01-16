@@ -1,6 +1,3 @@
-
-
-
 # utility functions for dealing with square grids
 def from_id_width(id, width):
     return (id % width, id // width)
