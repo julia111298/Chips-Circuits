@@ -1,12 +1,35 @@
+<<<<<<< HEAD
+
+
+=======
+from helper import *
+
+class PriorityQueue:
+    def __init__(self):
+        self.elements = []
+    
+    def empty(self):
+        return len(self.elements) == 0
+    
+    def put(self, item, priority):
+        heapq.heappush(self.elements, (priority, item))
+    
+    def get(self):
+        return heapq.heappop(self.elements)[1]
 
 def get_heuristic(gate_start, gate_end): 
     x1, y1 = gate_start[0], gate_start[1]
     x2, y2 = gate_end[0], gate_end[1]
+>>>>>>> be87e46d67edd68f6fe13052983e7b22854a2639
     return abs(x1 - x2) + abs(y1 - y2)
 
 def search(graph, begin, end):
     border = PriorityQueue()
+<<<<<<< HEAD
     border, put(begin, 0)
+=======
+    border.put(begin, 0)
+>>>>>>> be87e46d67edd68f6fe13052983e7b22854a2639
     cameFrom = {}
     costUpdate = {}
     cameFrom[begin] = None
@@ -27,4 +50,15 @@ def search(graph, begin, end):
                 cameFrom[new] = current
     return cameFrom, costUpdate
 
+<<<<<<< HEAD
 print(get_heuristic([0, 1, 0], [1, 1, 0]))
+=======
+
+
+start, goal = (0, 4), (7, 8)
+came_from, cost_so_far = a_star_search(diagram4, start, goal)
+draw_grid(diagram4, width=3, point_to=came_from, start=start, goal=goal)
+print()
+draw_grid(diagram4, width=3, number=cost_so_far, start=start, goal=goal)
+print()
+>>>>>>> be87e46d67edd68f6fe13052983e7b22854a2639
