@@ -10,6 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from code.classes import classes as classs
 import copy
+from functions import *
 
 import csv
 
@@ -150,16 +151,16 @@ for chips in distances:
     
     while coordinate != coordinate_end:
         # Determine direction in which wire has to move
-        if x_coordinate_start < x_coordinate_end:
-            step_x = 1
-        elif x_coordinate_start > x_coordinate_end:
+        if x_coordinate_start > x_coordinate_end:
             step_x = -1
-    
-        if y_coordinate_start < y_coordinate_end:
-            step_y = 1
-        elif y_coordinate_start > y_coordinate_end:
-            step_y = -1
+        elif x_coordinate_start < x_coordinate_end:
+            step_x = 1
 
+        if y_coordinate_start > y_coordinate_end:
+            step_y = -1
+        elif y_coordinate_start < y_coordinate_end:
+            step_y = 1
+ 
         # Append start coordinate to wire
         wires.append(coordinate)
         print(coordinate)
@@ -173,46 +174,37 @@ for chips in distances:
                 coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                 # Check for other gates or other wires
                 if gate_connections:
+                    x_z_coor = change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, x_coordinate_start, step_x, z_coordinate_start, 1)
+                    x_coordinate_start = x_z_coor[0]
+                    z_coordinate_start = x_z_coor[1]
+                    coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                     for key in gate_connections:
                         selected_wires = gate_connections[key]
                         if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
                             if coordinate != coordinate_end:
-                                x_coordinate_start = x_coordinate_start - step_x
+                                z_coordinate_start = z_coordinate_start - 1
                                 # z kan nu niet meerdere stappen omhoog/omlaag
-                                z_coordinate_start = z_coordinate_start + 1
+                                y_coordinate_start = y_coordinate_start + step_y
                                 #checken of na deze stap geen gate zit
                                 break
                     coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                    if gate_connections:
-                        for key in gate_connections:
-                            selected_wires = gate_connections[key]
-                            if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                if coordinate != coordinate_end:
-                                    z_coordinate_start = z_coordinate_start - 1
-                                    # z kan nu niet meerdere stappen omhoog/omlaag
-                                    y_coordinate_start = y_coordinate_start + step_y
-                                    #checken of na deze stap geen gate zit
-                                    break
-                        coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                        if gate_connections:
-                            for key in gate_connections:
-                                selected_wires = gate_connections[key]
-                                if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                    if coordinate != coordinate_end:
-                                        y_coordinate_start = y_coordinate_start - step_y - step_y
-                                        # z kan nu niet meerdere stappen omhoog/omlaag
-                                        break
-                            coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                            if gate_connections:
-                                for key in gate_connections:
-                                    selected_wires = gate_connections[key]
-                                    if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                        if coordinate != coordinate_end:
-                                            y_coordinate_start = y_coordinate_start + step_y
-                                            # z kan nu niet meerdere stappen omhoog/omlaag
-                                            x_coordinate_start = x_coordinate_start - step_x
-                                            #checken of na deze stap geen gate zit
-                                            break
+                    for key in gate_connections:
+                        selected_wires = gate_connections[key]
+                        if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
+                            if coordinate != coordinate_end:
+                                y_coordinate_start = y_coordinate_start - step_y - step_y
+                                # z kan nu niet meerdere stappen omhoog/omlaag
+                                break
+                    coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
+                    for key in gate_connections:
+                        selected_wires = gate_connections[key]
+                        if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
+                            if coordinate != coordinate_end:
+                                y_coordinate_start = y_coordinate_start + step_y
+                                # z kan nu niet meerdere stappen omhoog/omlaag
+                                x_coordinate_start = x_coordinate_start - step_x
+                                #checken of na deze stap geen gate zit
+                                break
                 elif coordinate in gate_coordinates and coordinate != coordinate_end:
                     x_coordinate_start = x_coordinate_start - step_x
                     # z kan nu niet meerdere stappen omhoog/omlaag
@@ -274,232 +266,56 @@ for chips in distances:
                                     break
                                     # moet ook uit while loop breken!
                         coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                        if gate_connections:
-                            for key in gate_connections:
-                                selected_wires = gate_connections[key]
-                                if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                    if coordinate != coordinate_end:
-                                        y_coordinate_start = y_coordinate_start - step_y
-                                        # z kan nu niet meerdere stappen omhoog/omlaag
-                                        x_coordinate_start = x_coordinate_start + step_x
-                                        #checken of na deze stap geen gate zit
-                                        break
-                                        # moet ook uit while loop breken!
-                            coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                            if gate_connections:
-                                for key in gate_connections:
-                                    selected_wires = gate_connections[key]
-                                    if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                        if coordinate != coordinate_end:
-                                            x_coordinate_start = x_coordinate_start - step_x - step_x
-                                            # z kan nu niet meerdere stappen omhoog/omlaag
-                                            break
-                                            # moet ook uit while loop breken!
-                                coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                                if gate_connections:
-                                    for key in gate_connections:
-                                        selected_wires = gate_connections[key]
-                                        if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                            if coordinate != coordinate_end:
-                                                x_coordinate_start = x_coordinate_start + step_x
-                                                # z kan nu niet meerdere stappen omhoog/omlaag
-                                                y_coordinate_start = y_coordinate_start - step_y
-                                                #checken of na deze stap geen gate zit
-                                                break
-                                                # moet ook uit while loop breken!
-                                elif coordinate in gate_coordinates and coordinate != coordinate_end:
+                        for key in gate_connections:
+                            selected_wires = gate_connections[key]
+                            if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
+                                if coordinate != coordinate_end:
+                                    y_coordinate_start = y_coordinate_start - step_y
+                                    # z kan nu niet meerdere stappen omhoog/omlaag
+                                    x_coordinate_start = x_coordinate_start + step_x
+                                    #checken of na deze stap geen gate zit
+                                    break
+                                    # moet ook uit while loop breken!
+                        coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
+                        for key in gate_connections:
+                            selected_wires = gate_connections[key]
+                            if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
+                                if coordinate != coordinate_end:
+                                    x_coordinate_start = x_coordinate_start - step_x - step_x
+                                    # z kan nu niet meerdere stappen omhoog/omlaag
+                                    break
+                                    # moet ook uit while loop breken!
+                        coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
+                        for key in gate_connections:
+                            selected_wires = gate_connections[key]
+                            if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
+                                if coordinate != coordinate_end:
                                     x_coordinate_start = x_coordinate_start + step_x
                                     # z kan nu niet meerdere stappen omhoog/omlaag
                                     y_coordinate_start = y_coordinate_start - step_y
                                     #checken of na deze stap geen gate zit
-                            elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                                x_coordinate_start = x_coordinate_start - step_x - step_x
-                                # z kan nu niet meerdere stappen omhoog/omlaag
-                                coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                                if gate_connections:
-                                    for key in gate_connections:
-                                        selected_wires = gate_connections[key]
-                                        if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                            if coordinate != coordinate_end:
-                                                x_coordinate_start = x_coordinate_start + step_x
-                                                # z kan nu niet meerdere stappen omhoog/omlaag
-                                                y_coordinate_start = y_coordinate_start - step_y
-                                                #checken of na deze stap geen gate zit
-                                                break
-                                                # moet ook uit while loop breken!
-                                elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                                    x_coordinate_start = x_coordinate_start + step_x
-                                    # z kan nu niet meerdere stappen omhoog/omlaag
-                                    y_coordinate_start = y_coordinate_start - step_y
-                                    #checken of na deze stap geen gate zit
-                        elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                            y_coordinate_start = y_coordinate_start - step_y
-                            # z kan nu niet meerdere stappen omhoog/omlaag
-                            x_coordinate_start = x_coordinate_start + step_x
-                            #checken of na deze stap geen gate zit
-                            coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                            if gate_connections:
-                                for key in gate_connections:
-                                    selected_wires = gate_connections[key]
-                                    if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                        if coordinate != coordinate_end:
-                                            x_coordinate_start = x_coordinate_start - step_x - step_x
-                                            # z kan nu niet meerdere stappen omhoog/omlaag
-                                            break
-                                            # moet ook uit while loop breken!
-                                coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                                if gate_connections:
-                                    for key in gate_connections:
-                                        selected_wires = gate_connections[key]
-                                        if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                            if coordinate != coordinate_end:
-                                                x_coordinate_start = x_coordinate_start + step_x
-                                                # z kan nu niet meerdere stappen omhoog/omlaag
-                                                y_coordinate_start = y_coordinate_start - step_y
-                                                #checken of na deze stap geen gate zit
-                                                break
-                                                # moet ook uit while loop breken!
-                                elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                                    x_coordinate_start = x_coordinate_start + step_x
-                                    # z kan nu niet meerdere stappen omhoog/omlaag
-                                    y_coordinate_start = y_coordinate_start - step_y
-                                    #checken of na deze stap geen gate zit
-                            elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                                x_coordinate_start = x_coordinate_start - step_x - step_x
-                                # z kan nu niet meerdere stappen omhoog/omlaag
-                                coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                                if gate_connections:
-                                    for key in gate_connections:
-                                        selected_wires = gate_connections[key]
-                                        if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                            if coordinate != coordinate_end:
-                                                x_coordinate_start = x_coordinate_start + step_x
-                                                # z kan nu niet meerdere stappen omhoog/omlaag
-                                                y_coordinate_start = y_coordinate_start - step_y
-                                                #checken of na deze stap geen gate zit
-                                                break
-                                                # moet ook uit while loop breken!
-                                elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                                    x_coordinate_start = x_coordinate_start + step_x
-                                    # z kan nu niet meerdere stappen omhoog/omlaag
-                                    y_coordinate_start = y_coordinate_start - step_y
-                                    #checken of na deze stap geen gate zit
+                                    break
+                                    # moet ook uit while loop breken!
                     elif coordinate in gate_coordinates and coordinate != coordinate_end:
                         z_coordinate_start = z_coordinate_start + 1
                         # z kan nu niet meerdere stappen omhoog/omlaag
                         y_coordinate_start = y_coordinate_start + step_y
                         #checken of na deze stap geen gate zit
                         coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                        if gate_connections:
-                            for key in gate_connections:
-                                selected_wires = gate_connections[key]
-                                if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                    if coordinate != coordinate_end:
-                                        y_coordinate_start = y_coordinate_start - step_y
-                                        # z kan nu niet meerdere stappen omhoog/omlaag
-                                        x_coordinate_start = x_coordinate_start + step_x
-                                        #checken of na deze stap geen gate zit
-                                        break
-                                        # moet ook uit while loop breken!
-                            coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                            if gate_connections:
-                                for key in gate_connections:
-                                    selected_wires = gate_connections[key]
-                                    if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                        if coordinate != coordinate_end:
-                                            x_coordinate_start = x_coordinate_start - step_x - step_x
-                                            # z kan nu niet meerdere stappen omhoog/omlaag
-                                            break
-                                            # moet ook uit while loop breken!
-                                coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                                if gate_connections:
-                                    for key in gate_connections:
-                                        selected_wires = gate_connections[key]
-                                        if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                            if coordinate != coordinate_end:
-                                                x_coordinate_start = x_coordinate_start + step_x
-                                                # z kan nu niet meerdere stappen omhoog/omlaag
-                                                y_coordinate_start = y_coordinate_start - step_y
-                                                #checken of na deze stap geen gate zit
-                                                break
-                                                # moet ook uit while loop breken!
-                                elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                                    x_coordinate_start = x_coordinate_start + step_x
-                                    # z kan nu niet meerdere stappen omhoog/omlaag
-                                    y_coordinate_start = y_coordinate_start - step_y
-                                    #checken of na deze stap geen gate zit
-                            elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                                x_coordinate_start = x_coordinate_start - step_x - step_x
-                                # z kan nu niet meerdere stappen omhoog/omlaag
-                                coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                                if gate_connections:
-                                    for key in gate_connections:
-                                        selected_wires = gate_connections[key]
-                                        if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                            if coordinate != coordinate_end:
-                                                x_coordinate_start = x_coordinate_start + step_x
-                                                # z kan nu niet meerdere stappen omhoog/omlaag
-                                                y_coordinate_start = y_coordinate_start - step_y
-                                                #checken of na deze stap geen gate zit
-                                                break
-                                                # moet ook uit while loop breken!
-                                elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                                    x_coordinate_start = x_coordinate_start + step_x
-                                    # z kan nu niet meerdere stappen omhoog/omlaag
-                                    y_coordinate_start = y_coordinate_start - step_y
-                                    #checken of na deze stap geen gate zit
-                        elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                            y_coordinate_start = y_coordinate_start - step_y
-                            # z kan nu niet meerdere stappen omhoog/omlaag
+                        if coordinate in gate_coordinates and coordinate != coordinate_end:
                             x_coordinate_start = x_coordinate_start + step_x
+                            # z kan nu niet meerdere stappen omhoog/omlaag
+                            y_coordinate_start = y_coordinate_start - step_y
                             #checken of na deze stap geen gate zit
                             coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                            if gate_connections:
-                                for key in gate_connections:
-                                    selected_wires = gate_connections[key]
-                                    if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                        if coordinate != coordinate_end:
-                                            x_coordinate_start = x_coordinate_start - step_x - step_x
-                                            # z kan nu niet meerdere stappen omhoog/omlaag
-                                            break
-                                            # moet ook uit while loop breken!
-                                coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                                if gate_connections:
-                                    for key in gate_connections:
-                                        selected_wires = gate_connections[key]
-                                        if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                            if coordinate != coordinate_end:
-                                                x_coordinate_start = x_coordinate_start + step_x
-                                                # z kan nu niet meerdere stappen omhoog/omlaag
-                                                y_coordinate_start = y_coordinate_start - step_y
-                                                #checken of na deze stap geen gate zit
-                                                break
-                                                # moet ook uit while loop breken!
-                                elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                                    x_coordinate_start = x_coordinate_start + step_x
-                                    # z kan nu niet meerdere stappen omhoog/omlaag
-                                    y_coordinate_start = y_coordinate_start - step_y
-                                    #checken of na deze stap geen gate zit
-                            elif coordinate in gate_coordinates and coordinate != coordinate_end:
+                            if coordinate in gate_coordinates and coordinate != coordinate_end:
                                 x_coordinate_start = x_coordinate_start - step_x - step_x
                                 # z kan nu niet meerdere stappen omhoog/omlaag
                                 coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                                if gate_connections:
-                                    for key in gate_connections:
-                                        selected_wires = gate_connections[key]
-                                        if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                            if coordinate != coordinate_end:
-                                                x_coordinate_start = x_coordinate_start + step_x
-                                                # z kan nu niet meerdere stappen omhoog/omlaag
-                                                y_coordinate_start = y_coordinate_start - step_y
-                                                #checken of na deze stap geen gate zit
-                                                break
-                                                # moet ook uit while loop breken!
-                                elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                                    x_coordinate_start = x_coordinate_start + step_x
-                                    # z kan nu niet meerdere stappen omhoog/omlaag
+                                if coordinate in gate_coordinates and coordinate != coordinate_end:
                                     y_coordinate_start = y_coordinate_start - step_y
-                                    #checken of na deze stap geen gate zit
+                                    # z kan nu niet meerdere stappen omhoog/omlaag
+                                    x_coordinate_start = x_coordinate_start + step_x
                     coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                     wires.append(coordinate)
                     print(coordinate)
@@ -527,162 +343,54 @@ for chips in distances:
                            #checken of na deze stap geen gate zit
                            break
                coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-               if gate_connections:
-                   for key in gate_connections:
-                       selected_wires = gate_connections[key]
-                       if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                           if coordinate != coordinate_end:
-                               z_coordinate_start = z_coordinate_start - 1
-                               # z kan nu niet meerdere stappen omhoog/omlaag
-                               x_coordinate_start = x_coordinate_start + step_x
-                               #checken of na deze stap geen gate zit
-                               break
-                   coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                   if gate_connections:
-                       for key in gate_connections:
-                           selected_wires = gate_connections[key]
-                           if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                               if coordinate != coordinate_end:
-                                   x_coordinate_start = x_coordinate_start - step_x - step_x
-                                   # z kan nu niet meerdere stappen omhoog/omlaag
-                                   break
-                       coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                       if gate_connections:
-                           for key in gate_connections:
-                               selected_wires = gate_connections[key]
-                               if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                   if coordinate != coordinate_end:
-                                       x_coordinate_start = x_coordinate_start + step_x
-                                       # z kan nu niet meerdere stappen omhoog/omlaag
-                                       y_coordinate_start = y_coordinate_start - step_y
-                                       #checken of na deze stap geen gate zit
-                                       break
-                       elif coordinate in gate_coordinates and coordinate != coordinate_end:
+               for key in gate_connections:
+                   selected_wires = gate_connections[key]
+                   if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
+                       if coordinate != coordinate_end:
+                           z_coordinate_start = z_coordinate_start - 1
+                           # z kan nu niet meerdere stappen omhoog/omlaag
+                           x_coordinate_start = x_coordinate_start + step_x
+                           #checken of na deze stap geen gate zit
+                           break
+               coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
+               for key in gate_connections:
+                   selected_wires = gate_connections[key]
+                   if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
+                       if coordinate != coordinate_end:
+                           x_coordinate_start = x_coordinate_start - step_x - step_x
+                           # z kan nu niet meerdere stappen omhoog/omlaag
+                           break
+               coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
+               for key in gate_connections:
+                   selected_wires = gate_connections[key]
+                   if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
+                       if coordinate != coordinate_end:
                            x_coordinate_start = x_coordinate_start + step_x
                            # z kan nu niet meerdere stappen omhoog/omlaag
                            y_coordinate_start = y_coordinate_start - step_y
                            #checken of na deze stap geen gate zit
-                   elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                       x_coordinate_start = x_coordinate_start - step_x - step_x
-                       # z kan nu niet meerdere stappen omhoog/omlaag
-                       coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                       if gate_connections:
-                           for key in gate_connections:
-                               selected_wires = gate_connections[key]
-                               if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                   if coordinate != coordinate_end:
-                                       x_coordinate_start = x_coordinate_start + step_x
-                                       # z kan nu niet meerdere stappen omhoog/omlaag
-                                       y_coordinate_start = y_coordinate_start - step_y
-                                       #checken of na deze stap geen gate zit
-                                       break
-                       elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                           x_coordinate_start = x_coordinate_start + step_x
-                           # z kan nu niet meerdere stappen omhoog/omlaag
-                           y_coordinate_start = y_coordinate_start - step_y
-                           #checken of na deze stap geen gate zit
-               elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                   z_coordinate_start = z_coordinate_start - 1
-                   # z kan nu niet meerdere stappen omhoog/omlaag
-                   x_coordinate_start = x_coordinate_start + step_x
-                   #checken of na deze stap geen gate zit
-                   coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                   if gate_connections:
-                       for key in gate_connections:
-                           selected_wires = gate_connections[key]
-                           if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                               if coordinate != coordinate_end:
-                                   x_coordinate_start = x_coordinate_start + step_x
-                                   # z kan nu niet meerdere stappen omhoog/omlaag
-                                   y_coordinate_start = y_coordinate_start - step_y
-                                   #checken of na deze stap geen gate zit
-                                   break
-                   elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                       x_coordinate_start = x_coordinate_start + step_x
-                       # z kan nu niet meerdere stappen omhoog/omlaag
-                       y_coordinate_start = y_coordinate_start - step_y
-                       #checken of na deze stap geen gate zit
+                           break
            elif coordinate in gate_coordinates and coordinate != coordinate_end:
                y_coordinate_start = y_coordinate_start - step_y
                # z kan nu niet meerdere stappen omhoog/omlaag
                z_coordinate_start = z_coordinate_start + 1
                #checken of na deze stap geen gate zit
                coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-               if gate_connections:
-                   for key in gate_connections:
-                       selected_wires = gate_connections[key]
-                       if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                           if coordinate != coordinate_end:
-                               z_coordinate_start = z_coordinate_start - 1
-                               # z kan nu niet meerdere stappen omhoog/omlaag
-                               x_coordinate_start = x_coordinate_start + step_x
-                               #checken of na deze stap geen gate zit
-                               break
-                   coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                   if gate_connections:
-                       for key in gate_connections:
-                           selected_wires = gate_connections[key]
-                           if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                               if coordinate != coordinate_end:
-                                   x_coordinate_start = x_coordinate_start - step_x - step_x
-                                   # z kan nu niet meerdere stappen omhoog/omlaag
-                                   break
-                       coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                       if gate_connections:
-                           for key in gate_connections:
-                               selected_wires = gate_connections[key]
-                               if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                   if coordinate != coordinate_end:
-                                       x_coordinate_start = x_coordinate_start + step_x
-                                       # z kan nu niet meerdere stappen omhoog/omlaag
-                                       y_coordinate_start = y_coordinate_start - step_y
-                                       #checken of na deze stap geen gate zit
-                                       break
-                       elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                           x_coordinate_start = x_coordinate_start + step_x
-                           # z kan nu niet meerdere stappen omhoog/omlaag
-                           y_coordinate_start = y_coordinate_start - step_y
-                           #checken of na deze stap geen gate zit
-                   elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                       x_coordinate_start = x_coordinate_start - step_x - step_x
-                       # z kan nu niet meerdere stappen omhoog/omlaag
-                       coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                       if gate_connections:
-                           for key in gate_connections:
-                               selected_wires = gate_connections[key]
-                               if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                   if coordinate != coordinate_end:
-                                       x_coordinate_start = x_coordinate_start + step_x
-                                       # z kan nu niet meerdere stappen omhoog/omlaag
-                                       y_coordinate_start = y_coordinate_start - step_y
-                                       #checken of na deze stap geen gate zit
-                                       break
-                       elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                           x_coordinate_start = x_coordinate_start + step_x
-                           # z kan nu niet meerdere stappen omhoog/omlaag
-                           y_coordinate_start = y_coordinate_start - step_y
-                           #checken of na deze stap geen gate zit
-               elif coordinate in gate_coordinates and coordinate != coordinate_end:
+               if coordinate in gate_coordinates and coordinate != coordinate_end:
                    z_coordinate_start = z_coordinate_start - 1
                    # z kan nu niet meerdere stappen omhoog/omlaag
                    x_coordinate_start = x_coordinate_start + step_x
                    #checken of na deze stap geen gate zit
                    coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                   if gate_connections:
-                       for key in gate_connections:
-                           selected_wires = gate_connections[key]
-                           if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                               if coordinate != coordinate_end:
-                                   x_coordinate_start = x_coordinate_start + step_x
-                                   # z kan nu niet meerdere stappen omhoog/omlaag
-                                   y_coordinate_start = y_coordinate_start - step_y
-                                   #checken of na deze stap geen gate zit
-                                   break
-                   elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                       x_coordinate_start = x_coordinate_start + step_x
+                   if coordinate in gate_coordinates and coordinate != coordinate_end:
+                       x_coordinate_start = x_coordinate_start - step_x - step_x
                        # z kan nu niet meerdere stappen omhoog/omlaag
-                       y_coordinate_start = y_coordinate_start - step_y
-                       #checken of na deze stap geen gate zit
+                       coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
+                       if coordinate in gate_coordinates and coordinate != coordinate_end:
+                           x_coordinate_start = x_coordinate_start + step_x
+                           # z kan nu niet meerdere stappen omhoog/omlaag
+                           y_coordinate_start = y_coordinate_start - step_y
+                           #checken of na deze stap geen gate zit
 
            # Reset switch variable to be able to move in x-direction
            switch_variable = 0
@@ -714,232 +422,58 @@ for chips in distances:
                                    break
                                    # moet ook uit while loop breken!
                        coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                       if gate_connections:
-                           for key in gate_connections:
-                               selected_wires = gate_connections[key]
-                               if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                   if coordinate != coordinate_end:
-                                       x_coordinate_start = x_coordinate_start - step_x
-                                       # z kan nu niet meerdere stappen omhoog/omlaag
-                                       y_coordinate_start = y_coordinate_start + step_y
-                                       #checken of na deze stap geen gate zit
-                                       break
-                                       # moet ook uit while loop breken!
-                           coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                           if gate_connections:
-                               for key in gate_connections:
-                                   selected_wires = gate_connections[key]
-                                   if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                       if coordinate != coordinate_end:
-                                           y_coordinate_start = y_coordinate_start - step_y - step_y
-                                           # z kan nu niet meerdere stappen omhoog/omlaag
-                                           break
-                                           # moet ook uit while loop breken!
-                               coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                               if gate_connections:
-                                   for key in gate_connections:
-                                       selected_wires = gate_connections[key]
-                                       if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                           if coordinate != coordinate_end:
-                                               y_coordinate_start = y_coordinate_start + step_y
-                                               # z kan nu niet meerdere stappen omhoog/omlaag
-                                               x_coordinate_start = x_coordinate_start - step_x
-                                               #checken of na deze stap geen gate zit
-                                               break
-                                               # moet ook uit while loop breken!
-                               elif coordinate in gate_coordinates and coordinate != coordinate_end:
+                       for key in gate_connections:
+                           selected_wires = gate_connections[key]
+                           if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
+                               if coordinate != coordinate_end:
+                                   x_coordinate_start = x_coordinate_start - step_x
+                                   # z kan nu niet meerdere stappen omhoog/omlaag
+                                   y_coordinate_start = y_coordinate_start + step_y
+                                   #checken of na deze stap geen gate zit
+                                   break
+                                   # moet ook uit while loop breken!
+                       coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
+                       for key in gate_connections:
+                           selected_wires = gate_connections[key]
+                           if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
+                               if coordinate != coordinate_end:
+                                   y_coordinate_start = y_coordinate_start - step_y - step_y
+                                   # z kan nu niet meerdere stappen omhoog/omlaag
+                                   break
+                                   # moet ook uit while loop breken!
+                       coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
+                       for key in gate_connections:
+                           selected_wires = gate_connections[key]
+                           if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
+                               if coordinate != coordinate_end:
                                    y_coordinate_start = y_coordinate_start + step_y
                                    # z kan nu niet meerdere stappen omhoog/omlaag
                                    x_coordinate_start = x_coordinate_start - step_x
                                    #checken of na deze stap geen gate zit
-                           elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                               y_coordinate_start = y_coordinate_start - step_y - step_y
-                               # z kan nu niet meerdere stappen omhoog/omlaag
-                               coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                               if gate_connections:
-                                   for key in gate_connections:
-                                       selected_wires = gate_connections[key]
-                                       if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                           if coordinate != coordinate_end:
-                                               y_coordinate_start = y_coordinate_start + step_y
-                                               # z kan nu niet meerdere stappen omhoog/omlaag
-                                               x_coordinate_start = x_coordinate_start - step_x
-                                               #checken of na deze stap geen gate zit
-                                               break
-                                               # moet ook uit while loop breken!
-                               elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                                   y_coordinate_start = y_coordinate_start + step_y
-                                   # z kan nu niet meerdere stappen omhoog/omlaag
-                                   x_coordinate_start = x_coordinate_start - step_x
-                                   #checken of na deze stap geen gate zit
-                       elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                           x_coordinate_start = x_coordinate_start - step_x
-                           # z kan nu niet meerdere stappen omhoog/omlaag
-                           y_coordinate_start = y_coordinate_start + step_y
-                           #checken of na deze stap geen gate zit
-                           coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                           if gate_connections:
-                               for key in gate_connections:
-                                   selected_wires = gate_connections[key]
-                                   if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                       if coordinate != coordinate_end:
-                                           y_coordinate_start = y_coordinate_start - step_y - step_y
-                                           # z kan nu niet meerdere stappen omhoog/omlaag
-                                           break
-                                           # moet ook uit while loop breken!
-                               coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                               if gate_connections:
-                                   for key in gate_connections:
-                                       selected_wires = gate_connections[key]
-                                       if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                           if coordinate != coordinate_end:
-                                               y_coordinate_start = y_coordinate_start + step_y
-                                               # z kan nu niet meerdere stappen omhoog/omlaag
-                                               x_coordinate_start = x_coordinate_start - step_x
-                                               #checken of na deze stap geen gate zit
-                                               break
-                                               # moet ook uit while loop breken!
-                               elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                                   y_coordinate_start = y_coordinate_start + step_y
-                                   # z kan nu niet meerdere stappen omhoog/omlaag
-                                   x_coordinate_start = x_coordinate_start - step_x
-                                   #checken of na deze stap geen gate zit
-                           elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                               y_coordinate_start = y_coordinate_start - step_y - step_y
-                               # z kan nu niet meerdere stappen omhoog/omlaag
-                               coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                               if gate_connections:
-                                   for key in gate_connections:
-                                       selected_wires = gate_connections[key]
-                                       if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                           if coordinate != coordinate_end:
-                                               y_coordinate_start = y_coordinate_start + step_y
-                                               # z kan nu niet meerdere stappen omhoog/omlaag
-                                               x_coordinate_start = x_coordinate_start - step_x
-                                               #checken of na deze stap geen gate zit
-                                               break
-                                               # moet ook uit while loop breken!
-                               elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                                   y_coordinate_start = y_coordinate_start + step_y
-                                   # z kan nu niet meerdere stappen omhoog/omlaag
-                                   x_coordinate_start = x_coordinate_start - step_x
-                                   #checken of na deze stap geen gate zit
+                                   break
+                                   # moet ook uit while loop breken!
                    elif coordinate in gate_coordinates and coordinate != coordinate_end:
                        z_coordinate_start = z_coordinate_start + 1
                        # z kan nu niet meerdere stappen omhoog/omlaag
                        x_coordinate_start = x_coordinate_start + step_x
                        #checken of na deze stap geen gate zit
                        coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                       if gate_connections:
-                           for key in gate_connections:
-                               selected_wires = gate_connections[key]
-                               if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                   if coordinate != coordinate_end:
-                                       x_coordinate_start = x_coordinate_start - step_x
-                                       # z kan nu niet meerdere stappen omhoog/omlaag
-                                       y_coordinate_start = y_coordinate_start + step_y
-                                       #checken of na deze stap geen gate zit
-                                       break
-                                       # moet ook uit while loop breken!
-                           coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                           if gate_connections:
-                               for key in gate_connections:
-                                   selected_wires = gate_connections[key]
-                                   if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                       if coordinate != coordinate_end:
-                                           y_coordinate_start = y_coordinate_start - step_y - step_y
-                                           # z kan nu niet meerdere stappen omhoog/omlaag
-                                           break
-                                           # moet ook uit while loop breken!
-                               coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                               if gate_connections:
-                                   for key in gate_connections:
-                                       selected_wires = gate_connections[key]
-                                       if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                           if coordinate != coordinate_end:
-                                               y_coordinate_start = y_coordinate_start + step_y
-                                               # z kan nu niet meerdere stappen omhoog/omlaag
-                                               x_coordinate_start = x_coordinate_start - step_x
-                                               #checken of na deze stap geen gate zit
-                                               break
-                                               # moet ook uit while loop breken!
-                               elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                                   y_coordinate_start = y_coordinate_start + step_y
-                                   # z kan nu niet meerdere stappen omhoog/omlaag
-                                   x_coordinate_start = x_coordinate_start - step_x
-                                   #checken of na deze stap geen gate zit
-                           elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                               y_coordinate_start = y_coordinate_start - step_y - step_y
-                               # z kan nu niet meerdere stappen omhoog/omlaag
-                               coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                               if gate_connections:
-                                   for key in gate_connections:
-                                       selected_wires = gate_connections[key]
-                                       if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                           if coordinate != coordinate_end:
-                                               y_coordinate_start = y_coordinate_start + step_y
-                                               # z kan nu niet meerdere stappen omhoog/omlaag
-                                               x_coordinate_start = x_coordinate_start - step_x
-                                               #checken of na deze stap geen gate zit
-                                               break
-                                               # moet ook uit while loop breken!
-                               elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                                   y_coordinate_start = y_coordinate_start + step_y
-                                   # z kan nu niet meerdere stappen omhoog/omlaag
-                                   x_coordinate_start = x_coordinate_start - step_x
-                                   #checken of na deze stap geen gate zit
-                       elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                           x_coordinate_start = x_coordinate_start - step_x
-                           # z kan nu niet meerdere stappen omhoog/omlaag
+                       if coordinate in gate_coordinates and coordinate != coordinate_end:
                            y_coordinate_start = y_coordinate_start + step_y
+                           # z kan nu niet meerdere stappen omhoog/omlaag
+                           x_coordinate_start = x_coordinate_start - step_x
                            #checken of na deze stap geen gate zit
                            coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                           if gate_connections:
-                               for key in gate_connections:
-                                   selected_wires = gate_connections[key]
-                                   if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                       if coordinate != coordinate_end:
-                                           y_coordinate_start = y_coordinate_start - step_y - step_y
-                                           # z kan nu niet meerdere stappen omhoog/omlaag
-                                           break
-                                           # moet ook uit while loop breken!
-                               coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                               if gate_connections:
-                                   for key in gate_connections:
-                                       selected_wires = gate_connections[key]
-                                       if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                           if coordinate != coordinate_end:
-                                               y_coordinate_start = y_coordinate_start + step_y
-                                               # z kan nu niet meerdere stappen omhoog/omlaag
-                                               x_coordinate_start = x_coordinate_start - step_x
-                                               #checken of na deze stap geen gate zit
-                                               break
-                                               # moet ook uit while loop breken!
-                               elif coordinate in gate_coordinates and coordinate != coordinate_end:
-                                   y_coordinate_start = y_coordinate_start + step_y
-                                   # z kan nu niet meerdere stappen omhoog/omlaag
-                                   x_coordinate_start = x_coordinate_start - step_x
-                                   #checken of na deze stap geen gate zit
-                           elif coordinate in gate_coordinates and coordinate != coordinate_end:
+                           if coordinate in gate_coordinates and coordinate != coordinate_end:
                                y_coordinate_start = y_coordinate_start - step_y - step_y
                                # z kan nu niet meerdere stappen omhoog/omlaag
                                coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                               if gate_connections:
-                                   for key in gate_connections:
-                                       selected_wires = gate_connections[key]
-                                       if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                           if coordinate != coordinate_end:
-                                               y_coordinate_start = y_coordinate_start + step_y
-                                               # z kan nu niet meerdere stappen omhoog/omlaag
-                                               x_coordinate_start = x_coordinate_start - step_x
-                                               #checken of na deze stap geen gate zit
-                                               break
-                                               # moet ook uit while loop breken!
-                               elif coordinate in gate_coordinates and coordinate != coordinate_end:
+                               if coordinate in gate_coordinates and coordinate != coordinate_end:
                                    y_coordinate_start = y_coordinate_start + step_y
                                    # z kan nu niet meerdere stappen omhoog/omlaag
                                    x_coordinate_start = x_coordinate_start - step_x
                                    #checken of na deze stap geen gate zit
+                                   
                    coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                    wires.append(coordinate)
                    print(coordinate)
