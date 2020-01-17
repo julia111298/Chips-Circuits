@@ -5,18 +5,6 @@ Tom Kamstra, Izhar Hamer, Julia Linde
 
 Defines functions needed for the script.
 """
-
-def create_steps(x_start, x_end, y_start, y_end):
-    step_x = 1
-    step_y = 1
-    
-    if x_start > x_end:
-        step_x = -1
-
-    if y_start > y_end:
-        step_y = -1
-
-    return [step_x, step_y]
     
 def change_coor(gate_conn, coor, gate_coor, wires, coor_end, coor_start1, step1, coor_start2, step2):
     for key in gate_conn:
@@ -25,6 +13,7 @@ def change_coor(gate_conn, coor, gate_coor, wires, coor_end, coor_start1, step1,
             if coor != coor_end:
                 coor_start1 = coor_start1 - step1
                 coor_start2 = coor_start2 + step2
+                print("JULIA")
                 break
                 
-    return [coor_start1, coor_start2]
+    return coor_start1, coor_start2
