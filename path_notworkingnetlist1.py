@@ -131,8 +131,6 @@ for chips in distances:
                     # Delete blocking wire
                     for j, item2_start in enumerate(allwires):
                         if item2_start.net == item_start.net:
-                            # print("DELETE:")
-#                             print(allwires[i])
                             wire = classs.Wire([0, 0, 0], (0, 0))
                             allwires[j] = wire
                     break
