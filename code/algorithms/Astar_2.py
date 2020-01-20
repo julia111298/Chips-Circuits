@@ -3,8 +3,7 @@
 # 
 # By team De Madarijntjes
 # 
-# Pseudocode source: https://www.geeksforgeeks.org/a-search-algorithm/
-# and http://mat.uab.cat/~alseda/MasterOpt/AStar-Algorithm.pdf
+# Pseudocode source: http://mat.uab.cat/~alseda/MasterOpt/AStar-Algorithm.pdf
 ##################################################
 class Grid():
     def __init__(self, grid_size):
@@ -13,18 +12,20 @@ class Grid():
         self.g = 0
 
     def make_grid(self):
-        for i in range(self.grid_size):
-            for j in range(self.grid_size):
-                self.grid.append(Node(i, j))
+        for x in range(self.grid_size):
+            for y in range(self.grid_size):
+                for z in range(self.grid_size):
+                    self.grid.append(Node(x, y, z))
     
     def get_grid(self):
         return self.grid
         
 
 class Node():
-    def __init__(self, x, y):
+    def __init__(self, x, y, z):
         self.x = x
         self.y = y
+        self.z = z
         self.g = 0
         self.parent = None
 
@@ -41,7 +42,7 @@ class Node():
         self.g += value
     
     def h_score(self, current, goal):
-        self.h = abs(current.x - goal.x) + abs(current.y - goal.y)
+        self.h = abs(current.x - goal.x) + abs(current.y - goal.y) + abs(current.z - goal.z)
         
         return self.h
     
@@ -53,27 +54,32 @@ class Node():
 
     def successors(self, grid, node_current, blocked):
         self.node_successors = []
+
         for i in grid:
             for j in grid:
-                if i.x == node_current.x and i.y == node_current.y:
-                    if abs(j.x - i.x) == 1 and j.y - i.y == 0:   
+                if i.x == node_current.x and i.y == node_current.y and i.z == node_current.z:
+                    if abs(j.x - i.x) == 1 and j.y - i.y == 0 and j.z - i.z == 0:   
                         if j not in blocked: 
                             self.node_successors.append(j)
-                    elif abs(j.y - i.y) == 1 and j.x - i.x == 0:
+                    elif abs(j.y - i.y) == 1 and j.x - i.x == 0 and j.z - i.z == 0:
                         if j not in blocked:
                             self.node_successors.append(j)
+                    elif abs(j.z - i.z) == 1 and j.x - i.x == 0 and j.y - i.y == 0:
+                        if j not in blocked:
+                            self.node_successors.append(j)
+                    
         return self.node_successors
 
     def __repr__(self):
-        return str([self.x, self.y])
+        return str([self.x, self.y, self.z])
 
 
-grid = Grid(3)
+grid = Grid(10)
 grid.make_grid()
 grid = grid.get_grid()
 
-start = Node(0, 0)
-goal = Node(2, 2)
+start = Node(0, 0, 0)
+goal = Node(9, 9, 9)
 start.h_score(start, goal)
 
 open_list = [start]
@@ -97,7 +103,6 @@ while open_list:
         if f_list[i] == minimum:
             q = open_list[i]
     
-    print("QQQ", q, "open list: ", open_list, "closed list: ", closed_list)
     if str(q) == str(goal):
         print("finished")
         break
@@ -144,7 +149,7 @@ while open_list:
     closed_list.append(q)
 
 end = q
-path = []
+path = [end]
 
 while end.get_parent() != None:
     end = end.get_parent()
