@@ -533,9 +533,9 @@ for keys in gate_connections:
         colourcounter = 0
     for i in range(len(allconnectionlist)):
         try:
-            print("LineFromTo", allconnectionlist[i], "To",allconnectionlist[i + 1] )
+            print("LineFromTo", allconnectionlist[i], "To", allconnectionlist[i + 1])
             draw_line(allconnectionlist[i], allconnectionlist[i+1], colours[colourcounter] )
-            plt.pause(0.000001)
+            # plt.pause(0.000001)
         except: 
             break
             
