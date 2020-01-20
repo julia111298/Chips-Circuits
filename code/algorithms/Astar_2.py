@@ -26,6 +26,7 @@ class Node():
         self.x = x
         self.y = y
         self.g = 0
+        self.parent = None
 
     def f_score(self):
         return self.g + self.h
@@ -44,6 +45,11 @@ class Node():
         
         return self.h
     
+    def set_parent(self, node):
+        self.parent = node
+    
+    def get_parent(self):
+        return self.parent
 
     def successors(self, grid, node_current, blocked):
         self.node_successors = []
@@ -77,17 +83,12 @@ closed_list = []
 blocked = []
 g_counter = 1
 
-path = []
+
 
 node_previous = []
-temp = 0
 
 while open_list:
-    
-    
-    # q = min(open_list, key=)
-
-    # Alle opties met de minimum f waarde pakken?hi
+    # Alle opties met de minimum f waarde pakken?
     f_list = []
     for i in open_list:
         f_list.append(i.f_score())
@@ -95,59 +96,38 @@ while open_list:
     for i in range(len(f_list)):
         if f_list[i] == minimum:
             q = open_list[i]
-    # print("QQQ", q)
-    temp += 1
-    if temp == 3:
-        break
     
+    print("QQQ", q, "open list: ", open_list, "closed list: ", closed_list)
     if str(q) == str(goal):
-        print(path)
         print("finished")
         break
 
-    # open_list.remove(q)
-    # closed_list.append(q)
-    
-    # blocked.append(q)
-    # print("closed: : :", closed_list)
     successors = q.successors(grid, q, closed_list)
-    
-    # blocked.append(q)
-    # print("blcoked,: ", blocked)
-    # print("prev", node_previous)
 
-    if node_previous:
+    
+    if node_previous and successors:
         successors.pop(0)
     
-    print(q, " successors: ", successors)
+    # print(q, " successors: ", successors)
     node_previous.clear()
     node_previous.append(q)
         
 
-
-    # print("open!", open_list)
-
     for i in successors:
-        # g_counter += 1
 
-        # i.g_score(1)
-        # i.h_score(i, q)
-        # f = i.f_score()
-
-        successor_current_cost = q.get_g()
-        print("i: ", i)
-        print("open lisT", open_list, "closed:", closed_list)
+        # Set successor_current_cost = g(node_current) + w(node_current, node_successor)
+        successor_current_cost = q.get_g() + 1
+        # print("i: ", i)
+        # print("open lisT", open_list, "closed:", closed_list)
         if i in open_list:
-            print("getggg: ", i.get_g())
-            print("current cost succ: ", successor_current_cost)
+            # print("getggg: ", i.get_g())
+            # print("current cost succ: ", successor_current_cost)
             if i.get_g() <= successor_current_cost:
-                # path.append(i)
                 # print("true")
                 # open_list.remove(i)
                 break
 
         elif i in closed_list:
-            print("in closed")
             if i.get_g() <= successor_current_cost:
                 break
             closed_list.remove(i)
@@ -155,15 +135,22 @@ while open_list:
         
         else:
             open_list.append(i)
-            # i.g_score(1)
-            # i.h_score(i, goal)
-            # i.f_score()
             i.h_score(i, goal)
         
         i.set_g(successor_current_cost)
-        q = i
+        i.set_parent(q)
+    
     open_list.remove(q)
     closed_list.append(q)
 
+end = q
+path = []
 
-print("not finished")
+while end.get_parent() != None:
+    end = end.get_parent()
+    path.append(end)
+
+# for q.get_parent()
+# print(q.get_parent().get_parent())
+
+print(path)
