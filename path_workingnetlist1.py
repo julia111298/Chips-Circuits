@@ -9,16 +9,17 @@ from mpl_toolkits import mplot3d
 import numpy as np
 import matplotlib.pyplot as plt
 from code.classes import classes as classs
+from code.functions import delete as delete
 import copy
 from functions import *
 
 import csv
 
 # Create netlist by loading file in class
-netlist = classs.Netlist("data/netlist_1.csv").netlist
+netlist = classs.Netlist("data/netlist_4.csv").netlist
 
 # Create list for gate coordinates
-gate_coordinates = classs.Gate_coordinate("data/pritn_1.csv").gate_coordinates
+gate_coordinates = classs.Gate_coordinate("data/print_2.csv").gate_coordinates
 print(gate_coordinates)
 
 # Create dictionary of gate connections with corresponding shortest distance
@@ -100,9 +101,7 @@ for chips in distances:
     z_coordinate_startcheck = z_coordinate_start + 1
     coordinate_5 = [x_coordinate_start, y_coordinate_start, z_coordinate_startcheck]
 
-
     coordinate_check = [coordinate_1, coordinate_2, coordinate_3, coordinate_4, coordinate_5]
-
 
     all_coordinates = []
     for coo in allwires:
@@ -123,11 +122,17 @@ for chips in distances:
 
                     print("This is deleted")
                     print(item_start.net)
+                    
+                    deletelist = []
                     # Delete blocking wire
                     for j, item2_start in enumerate(allwires):
                         if item2_start.net == item_start.net:
-                            wire = classs.Wire([0, 0, 0], (0, 0))
-                            allwires[j] = wire
+                            print("DELETETOM")
+                            deletelist.append(allwires[j])
+
+                    for delete_wire in deletelist:
+                        print("REALDELETE")
+                        allwires.remove(delete_wire)
                     break
     print("COUNT")
     print(count)
@@ -316,269 +321,62 @@ for chips in distances:
             check_coordinate = [x_coordinate_check, y_coordinate_end, z_coordinate_end]
             for item in allwires:
                 if item.coordinate == check_coordinate and item.net[0] != gate_end and item.net[1] != gate_end:
-                    # Clear wires list
-                    wires = []
-                    x_coordinate_start = int(coordinate_begin[0])
-                    y_coordinate_start = int(coordinate_begin[1])
-                    z_coordinate_start = int(coordinate_begin[2])
-                    coordinate = coordinate_begin
-                    
-                    # Switch order of gates
-                    end_gate = item.net[0]
-                    start_gate = item.net[1]
-                    distances.append(((start_gate, end_gate), 2))
-                    print("hallo")
-                    print(distances)
-                    # Delete wire from gate connections dictionary
-                    del gate_connections[item.net]
-                    
-                    # Delete blocking wire
-                    for i, item2 in enumerate(allwires):
-                        if item2.net == item.net:
-                            print("DELETE:")
-                            print(allwires[i])
-                            wire = classs.Wire([0, 0, 0], (0, 0))
-                            allwires[i] = wire
+                    (wires, x_coordinate_start, y_coordinate_start, z_coordinate_start, coordinate, gate_connections, allwires) = delete.delete_wire(wires, coordinate_begin, item.net, distances, gate_connections, allwires)
                     break
                 else:
                     copy_gate_connections = copy.deepcopy(gate_connections)
                     for key in copy_gate_connections:
                         if len(copy_gate_connections[key]) > 75:
-                            # Clear wires list
-                            wires = []
-                            x_coordinate_start = int(coordinate_begin[0])
-                            y_coordinate_start = int(coordinate_begin[1])
-                            z_coordinate_start = int(coordinate_begin[2])
-                            coordinate = coordinate_begin
+                            (wires, x_coordinate_start, y_coordinate_start, z_coordinate_start, coordinate, gate_connections, allwires) = delete.delete_wire(wires, coordinate_begin, item.net, distances, gate_connections, allwires)
                     
-                            # Switch order of gates
-                            end_gate = key[0]
-                            start_gate = key[1]
-                            distances.append(((start_gate, end_gate), 2))
-                            
-                            del gate_connections[key]
-                            
-                            for i, item2 in enumerate(allwires):
-                                if item2.net == item.net:
-                                    print("DELETE:")
-                                    print(allwires[i])
-                                    wire = classs.Wire([0, 0, 0], (0, 0))
-                                    allwires[i] = wire
-                            
                 break            
             x_coordinate_check = x_coordinate_end - step_x
             check_coordinate = [x_coordinate_check, y_coordinate_end, z_coordinate_end]
             for item in allwires:
                 if item.coordinate == check_coordinate and item.net[0] != gate_end and item.net[1] != gate_end:
-                    # Clear wires list
-                    wires = []
-                    x_coordinate_start = int(coordinate_begin[0])
-                    y_coordinate_start = int(coordinate_begin[1])
-                    z_coordinate_start = int(coordinate_begin[2])
-                    coordinate = coordinate_begin
-                    
-                    # Switch order of gates
-                    end_gate = item.net[0]
-                    start_gate = item.net[1]
-                    distances.append(((start_gate, end_gate), 2))
-                    print("hallo")
-                    print(distances)
-                    # Delete wire from gate connections dictionary
-                    del gate_connections[item.net]
-                    
-                    # Delete blocking wire
-                    for i, item2 in enumerate(allwires):
-                        if item2.net == item.net:
-                            print("DELETE:")
-                            print(allwires[i])
-                            wire = classs.Wire([0, 0, 0], (0, 0))
-                            allwires[i] = wire
+                    (wires, x_coordinate_start, y_coordinate_start, z_coordinate_start, coordinate, gate_connections, allwires) = delete.delete_wire(wires, coordinate_begin, item.net, distances, gate_connections, allwires)
                     break
                 else:
                     copy_gate_connections = copy.deepcopy(gate_connections)
                     for key in copy_gate_connections:
                         if len(copy_gate_connections[key]) > 75:
-                            # Clear wires list
-                            wires = []
-                            x_coordinate_start = int(coordinate_begin[0])
-                            y_coordinate_start = int(coordinate_begin[1])
-                            z_coordinate_start = int(coordinate_begin[2])
-                            coordinate = coordinate_begin
-                    
-                            # Switch order of gates
-                            end_gate = key[0]
-                            start_gate = key[1]
-                            distances.append(((start_gate, end_gate), 2))
-                            
-                            del gate_connections[key]
-                            
-                            for i, item2 in enumerate(allwires):
-                                if item2.net == item.net:
-                                    print("DELETE:")
-                                    print(allwires[i])
-                                    wire = classs.Wire([0, 0, 0], (0, 0))
-                                    allwires[i] = wire
+                            (wires, x_coordinate_start, y_coordinate_start, z_coordinate_start, coordinate, gate_connections, allwires) = delete.delete_wire(wires, coordinate_begin, item.net, distances, gate_connections, allwires)
                 break
             y_coordinate_check = y_coordinate_end + step_y
             check_coordinate = [x_coordinate_end, y_coordinate_check, z_coordinate_end]
             for item in allwires:
                 if item.coordinate == check_coordinate and item.net[0] != gate_end and item.net[1] != gate_end:
-                    # Clear wires list
-                    wires = []
-                    x_coordinate_start = int(coordinate_begin[0])
-                    y_coordinate_start = int(coordinate_begin[1])
-                    z_coordinate_start = int(coordinate_begin[2])
-                    coordinate = coordinate_begin
-                    
-                    # Switch order of gates
-                    end_gate = item.net[0]
-                    start_gate = item.net[1]
-                    distances.append(((start_gate, end_gate), 2))
-                    print("hallo")
-                    print(distances)
-                    # Delete wire from gate connections dictionary
-                    del gate_connections[item.net]
-
-                    # Delete blocking wire
-                    for i, item2 in enumerate(allwires):
-                        if item2.net == item.net:
-                            print("DELETE:")
-                            print(allwires[i])
-                            wire = classs.Wire([0, 0, 0], (0, 0))
-                            allwires[i] = wire
+                    (wires, x_coordinate_start, y_coordinate_start, z_coordinate_start, coordinate, gate_connections, allwires) = delete.delete_wire(wires, coordinate_begin, item.net, distances, gate_connections, allwires)
                     break
                 else:
                     copy_gate_connections = copy.deepcopy(gate_connections)
                     for key in copy_gate_connections:
                         if len(copy_gate_connections[key]) > 75:
-                            # Clear wires list
-                            wires = []
-                            x_coordinate_start = int(coordinate_begin[0])
-                            y_coordinate_start = int(coordinate_begin[1])
-                            z_coordinate_start = int(coordinate_begin[2])
-                            coordinate = coordinate_begin
-                    
-                            # Switch order of gates
-                            end_gate = key[0]
-                            start_gate = key[1]
-                            distances.append(((start_gate, end_gate), 2))
-                            
-                            del gate_connections[key]
-                            
-                            
-                            for i, item2 in enumerate(allwires):
-                                if item2.net == item.net:
-                                    print("DELETE:")
-                                    print(allwires[i])
-                                    wire = classs.Wire([0, 0, 0], (0, 0))
-                                    allwires[i] = wire
+                            (wires, x_coordinate_start, y_coordinate_start, z_coordinate_start, coordinate, gate_connections, allwires) = delete.delete_wire(wires, coordinate_begin, item.net, distances, gate_connections, allwires)
                 break
             y_coordinate_check = y_coordinate_end - step_y
             check_coordinate = [x_coordinate_end, y_coordinate_check, z_coordinate_end]
             for item in allwires:
                 if item.coordinate == check_coordinate and item.net[0] != gate_end and item.net[1] != gate_end:
-                    # Clear wires list
-                    wires = []
-                    x_coordinate_start = int(coordinate_begin[0])
-                    y_coordinate_start = int(coordinate_begin[1])
-                    z_coordinate_start = int(coordinate_begin[2])
-                    coordinate = coordinate_begin
-                    
-                    # Switch order of gates
-                    end_gate = item.net[0]
-                    start_gate = item.net[1]
-                    distances.append(((start_gate, end_gate), 2))
-                    print("hallo")
-                    print(distances)
-                    # Delete wire from gate connections dictionary
-                    del gate_connections[item.net]
-              
-                    # Delete blocking wire
-                    for i, item2 in enumerate(allwires):
-                        if item2.net == item.net:
-                            print("DELETE:")
-                            print(allwires[i])
-                            wire = classs.Wire([0, 0, 0], (0, 0))
-                            allwires[i] = wire
+                    (wires, x_coordinate_start, y_coordinate_start, z_coordinate_start, coordinate, gate_connections, allwires) = delete.delete_wire(wires, coordinate_begin, item.net, distances, gate_connections, allwires)
                     break
                 else:
                     copy_gate_connections = copy.deepcopy(gate_connections)
                     for key in copy_gate_connections:
                         if len(copy_gate_connections[key]) > 75:
-                            # Clear wires list
-                            wires = []
-                            x_coordinate_start = int(coordinate_begin[0])
-                            y_coordinate_start = int(coordinate_begin[1])
-                            z_coordinate_start = int(coordinate_begin[2])
-                            coordinate = coordinate_begin
-                    
-                            # Switch order of gates
-                            end_gate = key[0]
-                            start_gate = key[1]
-                            distances.append(((start_gate, end_gate), 2))
-                            
-                            del gate_connections[key]
-                            
-                            for i, item2 in enumerate(allwires):
-                                if item2.net == item.net:
-                                    print("DELETE:")
-                                    print(allwires[i])
-                                    wire = classs.Wire([0, 0, 0], (0, 0))
-                                    allwires[i] = wire
+                            (wires, x_coordinate_start, y_coordinate_start, z_coordinate_start, coordinate, gate_connections, allwires) = delete.delete_wire(wires, coordinate_begin, key, distances, gate_connections, allwires)
                 break
             z_coordinate_check = z_coordinate_end + 1
             check_coordinate = [x_coordinate_end, y_coordinate_end, z_coordinate_check]
             for item in allwires:
                 if item.coordinate == check_coordinate and item.net[0] != gate_end and item.net[1] != gate_end:
-                    # Clear wires list
-                    wires = []
-                    x_coordinate_start = int(coordinate_begin[0])
-                    y_coordinate_start = int(coordinate_begin[1])
-                    z_coordinate_start = int(coordinate_begin[2])
-                    coordinate = coordinate_begin
-                    
-                    # Switch order of gates
-                    end_gate = item.net[0]
-                    start_gate = item.net[1]
-                    distances.append(((start_gate, end_gate), 2))
-         
-                    print("hallo")
-                    print(distances)
-                    # Delete wire from gate connections dictionary
-                    del gate_connections[item.net]
-              
-                    # Delete blocking wire
-                    for i, item2 in enumerate(allwires):
-                        if item2.net == item.net:
-                            print("DELETE:")
-                            print(allwires[i])
-                            wire = classs.Wire([0, 0, 0], (0, 0))
-                            allwires[i] = wire
+                    (wires, x_coordinate_start, y_coordinate_start, z_coordinate_start, coordinate, gate_connections, allwires) = delete.delete_wire(wires, coordinate_begin, item.net, distances, gate_connections, allwires)
                     break
                 else:
                     copy_gate_connections = copy.deepcopy(gate_connections)
                     for key in copy_gate_connections:
                         if len(copy_gate_connections[key]) > 75:
-                            # Clear wires list
-                            wires = []
-                            x_coordinate_start = int(coordinate_begin[0])
-                            y_coordinate_start = int(coordinate_begin[1])
-                            z_coordinate_start = int(coordinate_begin[2])
-                            coordinate = coordinate_begin
-                    
-                            # Switch order of gates
-                            end_gate = key[0]
-                            start_gate = key[1]
-                            distances.append(((start_gate, end_gate), 2))
-                            
-                            del gate_connections[key]
-                            
-                            for i, item2 in enumerate(allwires):
-                                if item2.net == item.net:
-                                    print("DELETE:")
-                                    print(allwires[i])
-                                    wire = classs.Wire([0, 0, 0], (0, 0))
-                                    allwires[i] = wire
+                            (wires, x_coordinate_start, y_coordinate_start, z_coordinate_start, coordinate, gate_connections, allwires) = delete.delete_wire(wires, coordinate_begin, key, distances, gate_connections, allwires)
                 break
                     
             # If no wire can be deleted and current wire can still not reach end gate
