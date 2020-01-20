@@ -1,7 +1,7 @@
 ########################################
 # Breadth first search algorithm
 # 
-# Does not work with netlist yet.
+# Pruning on z values
 ########################################
 import csv
 from mpl_toolkits import mplot3d
@@ -101,8 +101,8 @@ class Graph():
         for i in node.neighbours:
             self.vertices[i].distance = node.distance + 1
             queue.append(i)
-        
         while len(queue) > 0:
+            # print(len(queue))
             node1 = self.vertices[queue.pop(0)]
             node1.status = "visited"
 
@@ -115,7 +115,9 @@ class Graph():
 
 
 # Open file with netlist
-data = open("../../data/example_net2.csv")
+data = open("../data/netlist_1.csv")
+
+# data = open("../data/example_net3.csv")
 
 reader = csv.reader(data)
 
@@ -128,7 +130,9 @@ for net_1, net_2 in reader:
 
 # Open file with gates
 
-gates = open("../../data/example_prit2.csv")
+gates = open("../data/pritn_1.csv")
+
+# gates = open("../data/example_prit3.csv")
 
 reader = csv.reader(gates)
 
@@ -143,7 +147,7 @@ gates = []
 fig = plt.figure()
 ax = plt.axes(projection="3d")
 
-make_grid(4, 4)
+make_grid(18, 8)
 
 
 for number, x, y in reader:
@@ -161,40 +165,54 @@ for number, x, y in reader:
 print("netlist: ", netlist)
 print("gate crds: ", gate_coordinates)
 
+
+
+# Increase z value if no solution can be found
+zCounter = 1
+# gridSize = 6
+
+
+allWires = {}
+
+
 # Convert list to tuple
 def convert(list): 
     return (*list, ) 
 
-def BFS_Algo(netlist, gate_coordinates):
+wire = [] 
 
-    grid1 = []
-    size = 5
-    for x in range(-1, size):
-        for y in range(-1, size):
-            for z in range(size):
-                grid1.append((x,y,z))
+blocked = []
 
+# For allWires keys
+tempCount = 0
 
-    allWires = {}
+for net in netlist:
+    if net[0] == "chip_a":
+        continue
 
+    # Check if there is a possible solution on the current layers
+    notPossible = True
+    while notPossible:
+        
+        # Make grid with bigger z if no solution possible to prune possibilities
+        grid1 = []
+        
+        # Make sure the amount of layers doesn't exceed 8
 
-    
+        if zCounter < 9:
+            for x in range(-1, 17):
+                for y in range(-1, 12):
+                    for z in range(zCounter):
+                        grid1.append((x,y,z))
+        else:
+            print("No solution can be found")
 
-    wire = [] 
-
-    blocked = []
-
-    # For allWires keys
-    tempCount = 0
-
-    for net in netlist:
-        if net[0] == "chip_a":
-            continue
+        
         start = str(gate_coordinates[int(net[0]) - 1])
 
         # niet meer nodig als ik het in het begin doe?
         # start = "(" + start.strip("[]") + ")"
-
+        
         g = Graph()
 
         # Add start gate
@@ -211,7 +229,7 @@ def BFS_Algo(netlist, gate_coordinates):
             grid2.append(i)
         
         edges = []
-
+        
         for i in grid1:
             for j in grid2:
                 if abs(j[0] - i[0]) == 1 and j[1] - i[1] == 0 and j[2] - i[2] ==0:    
@@ -233,8 +251,6 @@ def BFS_Algo(netlist, gate_coordinates):
 
         end = str(gate_coordinates[int(net[1]) - 1])
         
-
-
         for i in gate_coordinates: 
             i = eval(i) 
             for j in edges:
@@ -266,21 +282,20 @@ def BFS_Algo(netlist, gate_coordinates):
                                 pass
 
 
-        # print(allWires, "allwiresss")
-            # print("joejoe: ", j)
-
         for i in edges:
             g.add_edge(str(i[0]), str(i[1]))
 
         print()
         g.bfs(a)
-        
+        print(g.path(end))
 
-        
-        # end = "(" + end.strip("[]") + ")"
-        # print(g.path(end))
-        # if g.path(end)[0] == "(3, 1, 0)":
-        #     print(edges) 
+        if len(g.path(end)) == 1:
+            print("true")
+            zCounter += 1
+            notPossible = True
+        else:
+            print("false")
+            notPossible = False
         
         for i in g.path(end):
             
@@ -288,21 +303,15 @@ def BFS_Algo(netlist, gate_coordinates):
             if i != eval(start) and i != eval(end):
                 blocked.append(i)
             wire.append(list(i))
-
         
         allWires[str(tempCount)] = wire
         tempCount += 1
         wire = []
 
-        return allWires
-
 for gate_coordinate in gates: 
     set_gate(gate_coordinate)
     plt.pause(0.03)
 
-
-allWires = BFS_Algo(netlist, gate_coordinates)
-print(allWires)
 
 colours = ['b','lightgreen','cyan','m','yellow','k', 'pink']
 colourcounter = 0 
@@ -335,6 +344,6 @@ plt.show()
    
 # g.print_graph()
 # print(edges)
-# print(len(edges))
+print(len(edges))
 
 print(len(allWires))
