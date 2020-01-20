@@ -9,14 +9,13 @@ from mpl_toolkits import mplot3d
 import numpy as np
 import matplotlib.pyplot as plt
 from code.classes import classes as classs
-from code.functions import delete as delete
 import copy
 from functions import *
 
 import csv
 
 # Create netlist by loading file in class
-netlist = classs.Netlist("data/netlist_2.csv").netlist
+netlist = classs.Netlist("data/netlist_1.csv").netlist
 
 # Create list for gate coordinates
 gate_coordinates = classs.Gate_coordinate("data/pritn_1.csv").gate_coordinates
@@ -63,9 +62,6 @@ count = 0
 
 # Saves all wires
 allwires = []
-print("DISTT")
-print(distances)
-
 
 # Connect gates with eachother, starting with smallest distance
 for chips in distances:
@@ -112,10 +108,8 @@ for chips in distances:
     for coo in allwires:
         all_coordinates.append(coo.get_coordinate())
 
-
-    result = all(elem in all_coordinates for elem in coordinate_check)
-
-    if result:
+    # Checks whether all coordinates around current coordinate are occupied
+    if all(elem in all_coordinates for elem in coordinate_check):
         for coor in coordinate_check:
             for item_start in allwires:
                 if item_start.coordinate == coor and item_start.net[0] != gate_start and item_start.net[1] != gate_start:
@@ -129,18 +123,11 @@ for chips in distances:
 
                     print("This is deleted")
                     print(item_start.net)
-                    
-                    deletelist = []
                     # Delete blocking wire
                     for j, item2_start in enumerate(allwires):
                         if item2_start.net == item_start.net:
-                            print("DELETETOM")
-                            # print(allwires[i])
-                            deletelist.append(allwires[j])
-
-                    for delete_wire in deletelist:
-                        print("REALDELETE")
-                        allwires.remove(delete_wire)
+                            wire = classs.Wire([0, 0, 0], (0, 0))
+                            allwires[j] = wire
                     break
     print("COUNT")
     print(count)
@@ -155,9 +142,9 @@ for chips in distances:
     # Overwrite coordinate but save coordinate_begin in different variable        
     coordinate = coordinate_begin
     
-    checker = 0 
+    checker = 0
     notcomplete = 0
-
+    
     while coordinate != coordinate_end:
         # Determine direction in which wire has to move
         if x_coordinate_start > x_coordinate_end:
@@ -183,70 +170,26 @@ for chips in distances:
                 coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                 # Check for other gates or other wires
                 if gate_connections:
-                    x_z_coor = change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, x_coordinate_start, step_x, z_coordinate_start, 1)
-                    x_coordinate_start = x_z_coor[0]
-                    z_coordinate_start = x_z_coor[1]
+                    (x_coordinate_start, z_coordinate_start) = change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, x_coordinate_start, -step_x, z_coordinate_start, 1)
                     coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                    for key in gate_connections:
-                        selected_wires = gate_connections[key]
-                        if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                            if coordinate != coordinate_end:
-                                z_coordinate_start = z_coordinate_start - 1
-                                # z kan nu niet meerdere stappen omhoog/omlaag
-                                y_coordinate_start = y_coordinate_start + step_y
-                                #checken of na deze stap geen gate zit
-                                break
+                    (z_coordinate_start, y_coordinate_start) = change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, z_coordinate_start, -1, y_coordinate_start, step_y)
                     coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                    for key in gate_connections:
-                        selected_wires = gate_connections[key]
-                        if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                            if coordinate != coordinate_end:
-                                y_coordinate_start = y_coordinate_start - step_y - step_y
-                                # z kan nu niet meerdere stappen omhoog/omlaag
-                                break
+                    # Coordinate changes 2 times in y-direction, so step_y is doubled
+                    (y_coor_notrelevant, y_coordinate_start) = change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, y_coordinate_start, step_y, y_coordinate_start, (-2*step_y))
                     coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                    for key in gate_connections:
-                        selected_wires = gate_connections[key]
-                        if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                            if coordinate != coordinate_end:
-                                y_coordinate_start = y_coordinate_start + step_y
-                                # z kan nu niet meerdere stappen omhoog/omlaag
-                                x_coordinate_start = x_coordinate_start - step_x
-                                #checken of na deze stap geen gate zit
-                                break
+                    (y_coordinate_start, x_coordinate_start) = change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, y_coordinate_start, step_y, x_coordinate_start, -step_x)
                 elif coordinate in gate_coordinates and coordinate != coordinate_end:
                     x_coordinate_start = x_coordinate_start - step_x
                     # z kan nu niet meerdere stappen omhoog/omlaag
                     z_coordinate_start = z_coordinate_start + 1
                     #checken of na deze stap geen gate zit
                     coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                    if coordinate in gate_coordinates and coordinate != coordinate_end:
-                        y_coordinate_start = y_coordinate_start + step_y
-                        # z kan nu niet meerdere stappen omhoog/omlaag
-                        x_coordinate_start = x_coordinate_start - step_x
-                        #checken of na deze stap geen gate zit
-                        coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]  
-                        if coordinate in gate_coordinates and coordinate != coordinate_end:
-                            y_coordinate_start = y_coordinate_start - step_y - step_y
-                            # z kan nu niet meerdere stappen omhoog/omlaag
-                            coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                            if coordinate in gate_coordinates and coordinate != coordinate_end:
-                                y_coordinate_start = y_coordinate_start + step_y
-                                # z kan nu niet meerdere stappen omhoog/omlaag
-                                x_coordinate_start = x_coordinate_start - step_x
-                                #checken of na deze stap geen gate zit
-                                coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                                if coordinate in gate_coordinates and coordinate != coordinate_end:
-                                    z_coordinate_start = z_coordinate_start - 1
-                                    # z kan nu niet meerdere stappen omhoog/omlaag
-                                    y_coordinate_start = y_coordinate_start + step_y
-                                    #checken of na deze stap geen gate zit
-                                    coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                                    if coordinate in gate_coordinates and coordinate != coordinate_end:
-                                        y_coordinate_start = y_coordinate_start + step_y
-                                        # z kan nu niet meerdere stappen omhoog/omlaag
-                                        x_coordinate_start = x_coordinate_start - step_x
-                                        #checken of na deze stap geen gate zit
+                    (z_coordinate_start, x_coordinate_start) = change_coor2(coordinate, wires, gate_coordinates, coordinate_end, z_coordinate_start, -1, x_coordinate_start, -step_x)
+                    coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
+                    (x_coordinate_start, y_coordinate_start) = change_coor2(coordinate, wires, gate_coordinates, coordinate_end, x_coordinate_start, step_x, y_coordinate_start, step_y)
+                    coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
+                    # Coordinate changes 2 times in y-direction, so step_y is doubled
+                    (y_coor_notrelevant, y_coordinate_start) = change_coor2(coordinate, wires, gate_coordinates, coordinate_end, y_coordinate_start, step_y, y_coordinate_start, (-2*step_y))
         
                 coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                 wires.append(coordinate)
@@ -264,67 +207,25 @@ for chips in distances:
                     z_coordinate_start = z_coordinate_start - 1
                     coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                     if gate_connections:
-                        for key in gate_connections:
-                            selected_wires = gate_connections[key]
-                            if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                if coordinate != coordinate_end:
-                                    z_coordinate_start = z_coordinate_start + 1
-                                    # z kan nu niet meerdere stappen omhoog/omlaag
-                                    y_coordinate_start = y_coordinate_start + step_y
-                                    #checken of na deze stap geen gate zit
-                                    break
-                                    # moet ook uit while loop breken!
+                        (z_coordinate_start, y_coordinate_start) = change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, z_coordinate_start, 1, y_coordinate_start, step_y)
                         coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                        for key in gate_connections:
-                            selected_wires = gate_connections[key]
-                            if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                if coordinate != coordinate_end:
-                                    y_coordinate_start = y_coordinate_start - step_y
-                                    # z kan nu niet meerdere stappen omhoog/omlaag
-                                    x_coordinate_start = x_coordinate_start + step_x
-                                    #checken of na deze stap geen gate zit
-                                    break
-                                    # moet ook uit while loop breken!
+                        (y_coordinate_start, x_coordinate_start) = change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, y_coordinate_start, -step_y, x_coordinate_start, step_x)
                         coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                        for key in gate_connections:
-                            selected_wires = gate_connections[key]
-                            if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                if coordinate != coordinate_end:
-                                    x_coordinate_start = x_coordinate_start - step_x - step_x
-                                    # z kan nu niet meerdere stappen omhoog/omlaag
-                                    break
-                                    # moet ook uit while loop breken!
+                        (x_coor_notrelevant, x_coordinate_start) = change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, x_coordinate_start, step_x, x_coordinate_start, (-2*step_x))
                         coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                        for key in gate_connections:
-                            selected_wires = gate_connections[key]
-                            if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                                if coordinate != coordinate_end:
-                                    x_coordinate_start = x_coordinate_start + step_x
-                                    # z kan nu niet meerdere stappen omhoog/omlaag
-                                    y_coordinate_start = y_coordinate_start - step_y
-                                    #checken of na deze stap geen gate zit
-                                    break
-                                    # moet ook uit while loop breken!
+                        (x_coordinate_start, y_coordinate_start) = change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, x_coordinate_start, step_x, y_coordinate_start, -step_y)
                     elif coordinate in gate_coordinates and coordinate != coordinate_end:
                         z_coordinate_start = z_coordinate_start + 1
                         # z kan nu niet meerdere stappen omhoog/omlaag
                         y_coordinate_start = y_coordinate_start + step_y
                         #checken of na deze stap geen gate zit
                         coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                        if coordinate in gate_coordinates and coordinate != coordinate_end:
-                            x_coordinate_start = x_coordinate_start + step_x
-                            # z kan nu niet meerdere stappen omhoog/omlaag
-                            y_coordinate_start = y_coordinate_start - step_y
-                            #checken of na deze stap geen gate zit
-                            coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                            if coordinate in gate_coordinates and coordinate != coordinate_end:
-                                x_coordinate_start = x_coordinate_start - step_x - step_x
-                                # z kan nu niet meerdere stappen omhoog/omlaag
-                                coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                                if coordinate in gate_coordinates and coordinate != coordinate_end:
-                                    y_coordinate_start = y_coordinate_start - step_y
-                                    # z kan nu niet meerdere stappen omhoog/omlaag
-                                    x_coordinate_start = x_coordinate_start + step_x
+                        (x_coordinate_start, y_coordinate_start) = change_coor2(coordinate, wires, gate_coordinates, coordinate_end, x_coordinate_start, step_x, y_coordinate_start, -step_y)
+                        coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
+                        (x_coor_notrelevant, x_coordinate_start) = change_coor2(coordinate, wires, gate_coordinates, coordinate_end, x_coordinate_start, step_x, x_coordinate_start, (-2*step_x))
+                        coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
+                        (x_coordinate_start, y_coordinate_start) = change_coor2(coordinate, wires, gate_coordinates, coordinate_end, x_coordinate_start, step_x, y_coordinate_start, -step_y)
+         
                     coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                     wires.append(coordinate)
                     print(coordinate)
@@ -342,64 +243,28 @@ for chips in distances:
            coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
            # Check for other gates or other wires
            if gate_connections:
-               for key in gate_connections:
-                   selected_wires = gate_connections[key]
-                   if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                       if coordinate != coordinate_end:
-                           y_coordinate_start = y_coordinate_start - step_y
-                           # z kan nu niet meerdere stappen omhoog/omlaag
-                           z_coordinate_start = z_coordinate_start + 1
-                           #checken of na deze stap geen gate zit
-                           break
+               try:
+                   step_x = step_x
+               except:
+                   step_x = 0
+               (y_coordinate_start, z_coordinate_start) = change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, y_coordinate_start, -step_y, z_coordinate_start, 1)
                coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-               for key in gate_connections:
-                   selected_wires = gate_connections[key]
-                   if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                       if coordinate != coordinate_end:
-                           z_coordinate_start = z_coordinate_start - 1
-                           # z kan nu niet meerdere stappen omhoog/omlaag
-                           x_coordinate_start = x_coordinate_start + step_x
-                           #checken of na deze stap geen gate zit
-                           break
+               (z_coordinate_start, x_coordinate_start) = change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, z_coordinate_start, -1, x_coordinate_start, step_x)
                coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-               for key in gate_connections:
-                   selected_wires = gate_connections[key]
-                   if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                       if coordinate != coordinate_end:
-                           x_coordinate_start = x_coordinate_start - step_x - step_x
-                           # z kan nu niet meerdere stappen omhoog/omlaag
-                           break
+               (x_coor_notrelevant, x_coordinate_start) = change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, x_coordinate_start, step_x, x_coordinate_start, (-2*step_x))
                coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-               for key in gate_connections:
-                   selected_wires = gate_connections[key]
-                   if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                       if coordinate != coordinate_end:
-                           x_coordinate_start = x_coordinate_start + step_x
-                           # z kan nu niet meerdere stappen omhoog/omlaag
-                           y_coordinate_start = y_coordinate_start - step_y
-                           #checken of na deze stap geen gate zit
-                           break
+               (x_coordinate_start, y_coordinate_start) = change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, x_coordinate_start, step_x, y_coordinate_start, -step_y)
            elif coordinate in gate_coordinates and coordinate != coordinate_end:
                y_coordinate_start = y_coordinate_start - step_y
                # z kan nu niet meerdere stappen omhoog/omlaag
                z_coordinate_start = z_coordinate_start + 1
                #checken of na deze stap geen gate zit
                coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-               if coordinate in gate_coordinates and coordinate != coordinate_end:
-                   z_coordinate_start = z_coordinate_start - 1
-                   # z kan nu niet meerdere stappen omhoog/omlaag
-                   x_coordinate_start = x_coordinate_start + step_x
-                   #checken of na deze stap geen gate zit
-                   coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                   if coordinate in gate_coordinates and coordinate != coordinate_end:
-                       x_coordinate_start = x_coordinate_start - step_x - step_x
-                       # z kan nu niet meerdere stappen omhoog/omlaag
-                       coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                       if coordinate in gate_coordinates and coordinate != coordinate_end:
-                           x_coordinate_start = x_coordinate_start + step_x
-                           # z kan nu niet meerdere stappen omhoog/omlaag
-                           y_coordinate_start = y_coordinate_start - step_y
-                           #checken of na deze stap geen gate zit
+               (x_coordinate_start, z_coordinate_start) = change_coor2(coordinate, wires, gate_coordinates, coordinate_end, x_coordinate_start, step_x, z_coordinate_start, -1)
+               coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
+               (x_coor_notrelevant, x_coordinate_start) = change_coor2(coordinate, wires, gate_coordinates, coordinate_end, x_coordinate_start, step_x, x_coordinate_start, (-2*step_x))
+               coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
+               (x_coordinate_start, y_coordinate_start) = change_coor2(coordinate, wires, gate_coordinates, coordinate_end, x_coordinate_start, step_x, y_coordinate_start, -step_y)
 
            # Reset switch variable to be able to move in x-direction
            switch_variable = 0
@@ -420,68 +285,24 @@ for chips in distances:
                    z_coordinate_start = z_coordinate_start - 1
                    coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                    if gate_connections:
-                       for key in gate_connections:
-                           selected_wires = gate_connections[key]
-                           if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                               if coordinate != coordinate_end:
-                                   z_coordinate_start = z_coordinate_start + 1
-                                   # z kan nu niet meerdere stappen omhoog/omlaag
-                                   x_coordinate_start = x_coordinate_start + step_x
-                                   #checken of na deze stap geen gate zit
-                                   break
-                                   # moet ook uit while loop breken!
+                       (z_coordinate_start, x_coordinate_start) = change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, z_coordinate_start, 1, x_coordinate_start, step_x)
                        coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                       for key in gate_connections:
-                           selected_wires = gate_connections[key]
-                           if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                               if coordinate != coordinate_end:
-                                   x_coordinate_start = x_coordinate_start - step_x
-                                   # z kan nu niet meerdere stappen omhoog/omlaag
-                                   y_coordinate_start = y_coordinate_start + step_y
-                                   #checken of na deze stap geen gate zit
-                                   break
-                                   # moet ook uit while loop breken!
+                       (x_coordinate_start, y_coordinate_start) = change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, x_coordinate_start, -step_x, y_coordinate_start, step_y)
                        coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                       for key in gate_connections:
-                           selected_wires = gate_connections[key]
-                           if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                               if coordinate != coordinate_end:
-                                   y_coordinate_start = y_coordinate_start - step_y - step_y
-                                   # z kan nu niet meerdere stappen omhoog/omlaag
-                                   break
-                                   # moet ook uit while loop breken!
+                       (y_coor_notrelevant, y_coordinate_start) = change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, y_coordinate_start, step_y, y_coordinate_start, (-2*step_y))
                        coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                       for key in gate_connections:
-                           selected_wires = gate_connections[key]
-                           if coordinate in selected_wires or coordinate in gate_coordinates or coordinate in wires:
-                               if coordinate != coordinate_end:
-                                   y_coordinate_start = y_coordinate_start + step_y
-                                   # z kan nu niet meerdere stappen omhoog/omlaag
-                                   x_coordinate_start = x_coordinate_start - step_x
-                                   #checken of na deze stap geen gate zit
-                                   break
-                                   # moet ook uit while loop breken!
+                       (y_coordinate_start, x_coordinate_start) = change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, y_coordinate_start, step_y, x_coordinate_start, -step_x)
                    elif coordinate in gate_coordinates and coordinate != coordinate_end:
                        z_coordinate_start = z_coordinate_start + 1
                        # z kan nu niet meerdere stappen omhoog/omlaag
                        x_coordinate_start = x_coordinate_start + step_x
                        #checken of na deze stap geen gate zit
                        coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                       if coordinate in gate_coordinates and coordinate != coordinate_end:
-                           y_coordinate_start = y_coordinate_start + step_y
-                           # z kan nu niet meerdere stappen omhoog/omlaag
-                           x_coordinate_start = x_coordinate_start - step_x
-                           #checken of na deze stap geen gate zit
-                           coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                           if coordinate in gate_coordinates and coordinate != coordinate_end:
-                               y_coordinate_start = y_coordinate_start - step_y - step_y
-                               # z kan nu niet meerdere stappen omhoog/omlaag
-                               coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                               if coordinate in gate_coordinates and coordinate != coordinate_end:
-                                   y_coordinate_start = y_coordinate_start + step_y
-                                   # z kan nu niet meerdere stappen omhoog/omlaag
-                                   x_coordinate_start = x_coordinate_start - step_x
-                                   #checken of na deze stap geen gate zit
+                       (x_coordinate_start, y_coordinate_start) = change_coor2(coordinate, wires, gate_coordinates, coordinate_end, x_coordinate_start, -step_x, y_coordinate_start, step_y)
+                       coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
+                       (y_coor_notrelevant, y_coordinate_start) = change_coor2(coordinate, wires, gate_coordinates, coordinate_end, y_coordinate_start, step_y, y_coordinate_start, (-2*step_y))
+                       coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
+                       (x_coordinate_start, y_coordinate_start) = change_coor2(coordinate, wires, gate_coordinates, coordinate_end, x_coordinate_start, -step_x, y_coordinate_start, step_y)
                                    
                    coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                    wires.append(coordinate)
@@ -495,85 +316,269 @@ for chips in distances:
             check_coordinate = [x_coordinate_check, y_coordinate_end, z_coordinate_end]
             for item in allwires:
                 if item.coordinate == check_coordinate and item.net[0] != gate_end and item.net[1] != gate_end:
-                    (wires, x_coordinate_start, y_coordinate_start, z_coordinate_start, coordinate, gate_connections, allwires) = delete.delete_wire(wires, coordinate_begin, item.net, distances, gate_connections, allwires)
-                    # # Clear wires list
-                    # wires = []
-                    # x_coordinate_start = int(coordinate_begin[0])
-                    # y_coordinate_start = int(coordinate_begin[1])
-                    # z_coordinate_start = int(coordinate_begin[2])
-                    # coordinate = coordinate_begin
+                    # Clear wires list
+                    wires = []
+                    x_coordinate_start = int(coordinate_begin[0])
+                    y_coordinate_start = int(coordinate_begin[1])
+                    z_coordinate_start = int(coordinate_begin[2])
+                    coordinate = coordinate_begin
                     
-                    # # Switch order of gates
-                    # end_gate = item.net[0]
-                    # start_gate = item.net[1]
-                    # distances.append(((start_gate, end_gate), 2))
-                    # print("hallo")
-                    # print(distances)
-                    # # Delete wire from gate connections dictionary
-                    # del gate_connections[item.net]
+                    # Switch order of gates
+                    end_gate = item.net[0]
+                    start_gate = item.net[1]
+                    distances.append(((start_gate, end_gate), 2))
+                    print("hallo")
+                    print(distances)
+                    # Delete wire from gate connections dictionary
+                    del gate_connections[item.net]
                     
-                    # # Delete blocking wire
-                    # for i, item2 in enumerate(allwires):
-                    #     if item2.net == item.net:
-                    #         print("DELETE:")
-                    #         print(allwires[i])
-                    #         wire = classs.Wire([0, 0, 0], (0, 0))
-                    #         allwires[i] = wire
+                    # Delete blocking wire
+                    for i, item2 in enumerate(allwires):
+                        if item2.net == item.net:
+                            print("DELETE:")
+                            print(allwires[i])
+                            wire = classs.Wire([0, 0, 0], (0, 0))
+                            allwires[i] = wire
                     break
                 else:
                     copy_gate_connections = copy.deepcopy(gate_connections)
                     for key in copy_gate_connections:
                         if len(copy_gate_connections[key]) > 75:
-                            (wires, x_coordinate_start, y_coordinate_start, z_coordinate_start, coordinate, gate_connections, allwires) = delete.delete_wire(wires, coordinate_begin, item.net, distances, gate_connections, allwires)
+                            # Clear wires list
+                            wires = []
+                            x_coordinate_start = int(coordinate_begin[0])
+                            y_coordinate_start = int(coordinate_begin[1])
+                            z_coordinate_start = int(coordinate_begin[2])
+                            coordinate = coordinate_begin
+                    
+                            # Switch order of gates
+                            end_gate = key[0]
+                            start_gate = key[1]
+                            distances.append(((start_gate, end_gate), 2))
+                            
+                            del gate_connections[key]
+                            
+                            for i, item2 in enumerate(allwires):
+                                if item2.net == item.net:
+                                    print("DELETE:")
+                                    print(allwires[i])
+                                    wire = classs.Wire([0, 0, 0], (0, 0))
+                                    allwires[i] = wire
                             
                 break            
             x_coordinate_check = x_coordinate_end - step_x
             check_coordinate = [x_coordinate_check, y_coordinate_end, z_coordinate_end]
             for item in allwires:
                 if item.coordinate == check_coordinate and item.net[0] != gate_end and item.net[1] != gate_end:
-                    (wires, x_coordinate_start, y_coordinate_start, z_coordinate_start, coordinate, gate_connections, allwires) = delete.delete_wire(wires, coordinate_begin, item.net, distances, gate_connections, allwires)
+                    # Clear wires list
+                    wires = []
+                    x_coordinate_start = int(coordinate_begin[0])
+                    y_coordinate_start = int(coordinate_begin[1])
+                    z_coordinate_start = int(coordinate_begin[2])
+                    coordinate = coordinate_begin
+                    
+                    # Switch order of gates
+                    end_gate = item.net[0]
+                    start_gate = item.net[1]
+                    distances.append(((start_gate, end_gate), 2))
+                    print("hallo")
+                    print(distances)
+                    # Delete wire from gate connections dictionary
+                    del gate_connections[item.net]
+                    
+                    # Delete blocking wire
+                    for i, item2 in enumerate(allwires):
+                        if item2.net == item.net:
+                            print("DELETE:")
+                            print(allwires[i])
+                            wire = classs.Wire([0, 0, 0], (0, 0))
+                            allwires[i] = wire
                     break
                 else:
                     copy_gate_connections = copy.deepcopy(gate_connections)
                     for key in copy_gate_connections:
                         if len(copy_gate_connections[key]) > 75:
-                            (wires, x_coordinate_start, y_coordinate_start, z_coordinate_start, coordinate, gate_connections, allwires) = delete.delete_wire(wires, coordinate_begin, item.net, distances, gate_connections, allwires)
+                            # Clear wires list
+                            wires = []
+                            x_coordinate_start = int(coordinate_begin[0])
+                            y_coordinate_start = int(coordinate_begin[1])
+                            z_coordinate_start = int(coordinate_begin[2])
+                            coordinate = coordinate_begin
+                    
+                            # Switch order of gates
+                            end_gate = key[0]
+                            start_gate = key[1]
+                            distances.append(((start_gate, end_gate), 2))
+                            
+                            del gate_connections[key]
+                            
+                            for i, item2 in enumerate(allwires):
+                                if item2.net == item.net:
+                                    print("DELETE:")
+                                    print(allwires[i])
+                                    wire = classs.Wire([0, 0, 0], (0, 0))
+                                    allwires[i] = wire
                 break
             y_coordinate_check = y_coordinate_end + step_y
             check_coordinate = [x_coordinate_end, y_coordinate_check, z_coordinate_end]
             for item in allwires:
                 if item.coordinate == check_coordinate and item.net[0] != gate_end and item.net[1] != gate_end:
-                    (wires, x_coordinate_start, y_coordinate_start, z_coordinate_start, coordinate, gate_connections, allwires) = delete.delete_wire(wires, coordinate_begin, item.net, distances, gate_connections, allwires)
+                    # Clear wires list
+                    wires = []
+                    x_coordinate_start = int(coordinate_begin[0])
+                    y_coordinate_start = int(coordinate_begin[1])
+                    z_coordinate_start = int(coordinate_begin[2])
+                    coordinate = coordinate_begin
+                    
+                    # Switch order of gates
+                    end_gate = item.net[0]
+                    start_gate = item.net[1]
+                    distances.append(((start_gate, end_gate), 2))
+                    print("hallo")
+                    print(distances)
+                    # Delete wire from gate connections dictionary
+                    del gate_connections[item.net]
+
+                    # Delete blocking wire
+                    for i, item2 in enumerate(allwires):
+                        if item2.net == item.net:
+                            print("DELETE:")
+                            print(allwires[i])
+                            wire = classs.Wire([0, 0, 0], (0, 0))
+                            allwires[i] = wire
                     break
                 else:
                     copy_gate_connections = copy.deepcopy(gate_connections)
                     for key in copy_gate_connections:
                         if len(copy_gate_connections[key]) > 75:
-                            (wires, x_coordinate_start, y_coordinate_start, z_coordinate_start, coordinate, gate_connections, allwires) = delete.delete_wire(wires, coordinate_begin, key, distances, gate_connections, allwires)
+                            # Clear wires list
+                            wires = []
+                            x_coordinate_start = int(coordinate_begin[0])
+                            y_coordinate_start = int(coordinate_begin[1])
+                            z_coordinate_start = int(coordinate_begin[2])
+                            coordinate = coordinate_begin
+                    
+                            # Switch order of gates
+                            end_gate = key[0]
+                            start_gate = key[1]
+                            distances.append(((start_gate, end_gate), 2))
+                            
+                            del gate_connections[key]
+                            
+                            
+                            for i, item2 in enumerate(allwires):
+                                if item2.net == item.net:
+                                    print("DELETE:")
+                                    print(allwires[i])
+                                    wire = classs.Wire([0, 0, 0], (0, 0))
+                                    allwires[i] = wire
                 break
             y_coordinate_check = y_coordinate_end - step_y
             check_coordinate = [x_coordinate_end, y_coordinate_check, z_coordinate_end]
             for item in allwires:
                 if item.coordinate == check_coordinate and item.net[0] != gate_end and item.net[1] != gate_end:
-                    (wires, x_coordinate_start, y_coordinate_start, z_coordinate_start, coordinate, gate_connections, allwires) = delete.delete_wire(wires, coordinate_begin, item.net, distances, gate_connections, allwires)
+                    # Clear wires list
+                    wires = []
+                    x_coordinate_start = int(coordinate_begin[0])
+                    y_coordinate_start = int(coordinate_begin[1])
+                    z_coordinate_start = int(coordinate_begin[2])
+                    coordinate = coordinate_begin
+                    
+                    # Switch order of gates
+                    end_gate = item.net[0]
+                    start_gate = item.net[1]
+                    distances.append(((start_gate, end_gate), 2))
+                    print("hallo")
+                    print(distances)
+                    # Delete wire from gate connections dictionary
+                    del gate_connections[item.net]
+              
+                    # Delete blocking wire
+                    for i, item2 in enumerate(allwires):
+                        if item2.net == item.net:
+                            print("DELETE:")
+                            print(allwires[i])
+                            wire = classs.Wire([0, 0, 0], (0, 0))
+                            allwires[i] = wire
                     break
                 else:
                     copy_gate_connections = copy.deepcopy(gate_connections)
                     for key in copy_gate_connections:
                         if len(copy_gate_connections[key]) > 75:
-                            (wires, x_coordinate_start, y_coordinate_start, z_coordinate_start, coordinate, gate_connections, allwires) = delete.delete_wire(wires, coordinate_begin, key, distances, gate_connections, allwires)
+                            # Clear wires list
+                            wires = []
+                            x_coordinate_start = int(coordinate_begin[0])
+                            y_coordinate_start = int(coordinate_begin[1])
+                            z_coordinate_start = int(coordinate_begin[2])
+                            coordinate = coordinate_begin
+                    
+                            # Switch order of gates
+                            end_gate = key[0]
+                            start_gate = key[1]
+                            distances.append(((start_gate, end_gate), 2))
+                            
+                            del gate_connections[key]
+                            
+                            for i, item2 in enumerate(allwires):
+                                if item2.net == item.net:
+                                    print("DELETE:")
+                                    print(allwires[i])
+                                    wire = classs.Wire([0, 0, 0], (0, 0))
+                                    allwires[i] = wire
                 break
             z_coordinate_check = z_coordinate_end + 1
             check_coordinate = [x_coordinate_end, y_coordinate_end, z_coordinate_check]
             for item in allwires:
                 if item.coordinate == check_coordinate and item.net[0] != gate_end and item.net[1] != gate_end:
-                    (wires, x_coordinate_start, y_coordinate_start, z_coordinate_start, coordinate, gate_connections, allwires) = delete.delete_wire(wires, coordinate_begin, item.net, distances, gate_connections, allwires)
+                    # Clear wires list
+                    wires = []
+                    x_coordinate_start = int(coordinate_begin[0])
+                    y_coordinate_start = int(coordinate_begin[1])
+                    z_coordinate_start = int(coordinate_begin[2])
+                    coordinate = coordinate_begin
+                    
+                    # Switch order of gates
+                    end_gate = item.net[0]
+                    start_gate = item.net[1]
+                    distances.append(((start_gate, end_gate), 2))
+         
+                    print("hallo")
+                    print(distances)
+                    # Delete wire from gate connections dictionary
+                    del gate_connections[item.net]
+              
+                    # Delete blocking wire
+                    for i, item2 in enumerate(allwires):
+                        if item2.net == item.net:
+                            print("DELETE:")
+                            print(allwires[i])
+                            wire = classs.Wire([0, 0, 0], (0, 0))
+                            allwires[i] = wire
                     break
                 else:
                     copy_gate_connections = copy.deepcopy(gate_connections)
                     for key in copy_gate_connections:
                         if len(copy_gate_connections[key]) > 75:
-                            (wires, x_coordinate_start, y_coordinate_start, z_coordinate_start, coordinate, gate_connections, allwires) = delete.delete_wire(wires, coordinate_begin, key, distances, gate_connections, allwires)
+                            # Clear wires list
+                            wires = []
+                            x_coordinate_start = int(coordinate_begin[0])
+                            y_coordinate_start = int(coordinate_begin[1])
+                            z_coordinate_start = int(coordinate_begin[2])
+                            coordinate = coordinate_begin
+                    
+                            # Switch order of gates
+                            end_gate = key[0]
+                            start_gate = key[1]
+                            distances.append(((start_gate, end_gate), 2))
+                            
+                            del gate_connections[key]
+                            
+                            for i, item2 in enumerate(allwires):
+                                if item2.net == item.net:
+                                    print("DELETE:")
+                                    print(allwires[i])
+                                    wire = classs.Wire([0, 0, 0], (0, 0))
+                                    allwires[i] = wire
                 break
                     
             # If no wire can be deleted and current wire can still not reach end gate
@@ -652,7 +657,7 @@ for chips in distances:
     net.create_wires(wires)
     gate_connections.update({connected_gate: wires})
     # if count > 54:
-    #     break
+   #      break
 
     # if len(gate_connections) == len(netlist):
    #      break
