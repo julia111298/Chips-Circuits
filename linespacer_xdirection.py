@@ -4,6 +4,8 @@ path.py
 Tom Kamstra, Izhar Hamer, Julia Linde
 
 Finds the optimal paths between the chips
+
+28 wires within grid
 """
 from mpl_toolkits import mplot3d
 import numpy as np
@@ -76,10 +78,6 @@ for chips in distances:
 
     coordinate_begin = gate_coordinates[gate_start - 1]
     coordinate_end = gate_coordinates[gate_end - 1]
-    
-    print("COORDINATES")
-    print(coordinate_begin)
-    print(coordinate_end)
     
     # Define x, y and z coordinates of start and end gate
     x_coordinate_start = int(coordinate_begin[0])
@@ -377,12 +375,9 @@ for chips in distances:
             print("CHECKER", checker)
         if checker > 200: 
             notcomplete += 1
-            print("NOTCOMPLETE", notcomplete)
             break
                
-    count += 1         
-    print("WIRESSSS")
-    print(wires)
+    count += 1
     
     wires_length = len(wires)
     
@@ -435,74 +430,61 @@ for chips in distances:
                 
                     distances.append((new_net, 2))
                 
-                    longest_wire_length = 0
-                    # Select 2 longest wires and create them again
-                    for connection in gate_connections:
-                        wire_length = len(gate_connections[connection])
-                        if wire_length > longest_wire_length:
-                            longest_wire_length = wire_length
-                            delete_gate = connection
-                    
-                    new1 = (delete_gate[1], delete_gate[0])
-                    distances.append((new1, 2))
-                        
-                    del gate_connections[delete_gate]
-                
-                    longest_wire_length = 0
-                    # Select 2 longest wires and create them again
-                    for connection in gate_connections:
-                        wire_length = len(gate_connections[connection])
-                        if wire_length > longest_wire_length:
-                            longest_wire_length = wire_length
-                            delete_gate2 = connection
-                    
-                    new2 = (delete_gate2[1], delete_gate2[0])
-                    distances.append((new2, 2))
-                    
-                    del gate_connections[delete_gate2]
-                    
-                    longest_wire_length = 0
-                    # Select 2 longest wires and create them again
-                    for connection in gate_connections:
-                        wire_length = len(gate_connections[connection])
-                        if wire_length > longest_wire_length:
-                            longest_wire_length = wire_length
-                            delete_gate3 = connection
-                    
-                    new3 = (delete_gate3[1], delete_gate3[0])
-                    distances.append((new3, 2))
-                    
-                    del gate_connections[delete_gate3]
-                    
-                    longest_wire_length = 0
-                    # Select 2 longest wires and create them again
-                    for connection in gate_connections:
-                        wire_length = len(gate_connections[connection])
-                        if wire_length > longest_wire_length:
-                            longest_wire_length = wire_length
-                            delete_gate4 = connection
-                    
-                    new4 = (delete_gate4[1], delete_gate4[0])
-                    distances.append((new4, 2))
-                        
-                    del gate_connections[delete_gate4]
+                    # Repeat this 4 times
+                    for repeat in range(4):
+                        longest_wire_length = 0
+                        # Select longest wire and create again
+                        for connection in gate_connections:
+                            wire_length = len(gate_connections[connection])
+                            if wire_length > longest_wire_length:
+                                longest_wire_length = wire_length
+                                delete_gate = connection
+            
+                        new_wire = (delete_gate[1], delete_gate[0])
+                        distances.append((new_wire, 2))
+            
+                        del gate_connections[delete_gate]
 
+                        deletewire = []
+                        # Delete blocking wire
+                        for i, item2 in enumerate(allwires):
+                            if item2.net == gate_net or item2.net == delete_gate:
+                                deletewire.append(allwires[i])
+
+                        for delete_wire in deletewire:
+                            allwires.remove(delete_wire)
+        
+        connections_list = list(gate_connections.items())
+                 
+        for index in connections_list:
+            wire = index[1]
+            gatenet = index[0]
+            for coord in wire:
+                x_coor = coord[0]
+                y_coor = coord[1]
+                if x_coor < 0 or y_coor < 0:
+                    print("Succ", gatenet)
+
+                    del gate_connections[gatenet]
+ 
+                    wire_new = (gatenet[1], gatenet[0])
+                    print(wire_new)
+                    # distances.append((gatenet, 2))
+                    
                     deletewire = []
                     # Delete blocking wire
                     for i, item2 in enumerate(allwires):
-                        if item2.net == gate_net or item2.net == delete_gate or item2.net == delete_gate2:
+                        if item2.net == key:
                             deletewire.append(allwires[i])
 
                     for delete_wire in deletewire:
                         allwires.remove(delete_wire)
+                    break
+                                        
     
 print(gate_connections)
 print(len(gate_connections))
 print("JOEJOE")
-print("ALL WIRESSS")
-print(allwires[0].coordinate)
-# print(gate_connections[(17,10)])
-
 
 length = 0
 # Calculate total length of wires

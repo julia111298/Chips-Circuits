@@ -16,7 +16,7 @@ import copy
 import csv
 
 # Create netlist by loading file in class
-netlist = classs.Netlist("data/netlist_2.csv").netlist
+netlist = classs.Netlist("data/netlist_1.csv").netlist
 
 # Create list for gate coordinates
 gate_coordinates = classs.Gate_coordinate("data/pritn_1.csv").gate_coordinates
@@ -493,7 +493,7 @@ for keys in gate_connections:
         try:
             print("LineFromTo", allconnectionlist[i], "To", allconnectionlist[i + 1])
             draw_line(allconnectionlist[i], allconnectionlist[i+1], colours[colourcounter] )
-            # plt.pause(0.000001)
+            plt.pause(0.000001)
         except: 
             break
             

@@ -1,9 +1,7 @@
 """
 path.py
-
 Tom Kamstra, Izhar Hamer, Julia Linde
-
-Finds the optimal paths between the chips based on ratio between distance in x direction and total distance between chips.
+Finds the optimal paths between the chips based on distance in y direction.
 """
 from mpl_toolkits import mplot3d
 import numpy as np
@@ -36,19 +34,14 @@ for item in netlist:
     coordinate_start = gate_coordinates[gate_start - 1]
     coordinate_end = gate_coordinates[gate_end - 1]
     
-    # Define x and y coordinates for start and end gate
-    x_coordinate_start = int(coordinate_start[0])
+    # Define y coordinates for start and end gate
     y_coordinate_start = int(coordinate_start[1])
-
-    x_coordinate_end = int(coordinate_end[0])
     y_coordinate_end = int(coordinate_end[1])
 
     # Calculate total shortest distance between gates
-    total_dist = abs(x_coordinate_start - x_coordinate_end) + abs(y_coordinate_start - y_coordinate_end)
     y_dist = abs(y_coordinate_start - y_coordinate_end)
-    dist_ratio = y_dist/total_dist
-    
-    distances.update({connected_gate: dist_ratio})
+
+    distances.update({connected_gate: y_dist})
 
 # Sort connections from smallest to largest distance in dictionary
 distances = list(distances.items())
@@ -71,9 +64,6 @@ allwires = []
 
 # Defines maximum number of layers
 max_num_layers = 7
-
-# Defines number of wires that are created again after all wires are (partly) created
-newwires_counter = 2
 
 # Connect gates with eachother, starting with smallest distance
 for chips in distances:
@@ -425,6 +415,14 @@ for chips in distances:
     net = classs.Net(gate_start, gate_end)
     net.create_wires(wires)
     gate_connections.update({connected_gate: wires})
+    # if count > 54:
+   #      break
+
+    # if len(gate_connections) == len(netlist):
+   #      break
+    print("ALL WIRES")
+    print(allwires)
+    print(net)
     
     if len(gate_connections) == len(netlist):
         # Check whether every wire reaches end gate
@@ -450,32 +448,43 @@ for chips in distances:
                     del gate_connections[gate_net]
                 
                     distances.append((new_net, 2))
+                
+                    longest_wire_length = 0
+                    # Select 2 longest wires and create them again
+                    for connection in gate_connections:
+                        wire_length = len(gate_connections[connection])
+                        if wire_length > longest_wire_length:
+                            longest_wire_length = wire_length
+                            delete_gate = connection
                     
-                    # Repeat this number of newwires_counter times
-                    for repeat in range(newwires_counter):
-                        longest_wire_length = 0
-                        # Select longest wire and create again
-                        for connection in gate_connections:
-                            wire_length = len(gate_connections[connection])
-                            if wire_length > longest_wire_length:
-                                longest_wire_length = wire_length
-                                delete_gate = connection
+                    new1 = (delete_gate[1], delete_gate[0])
+                    distances.append((new1, 2))
                         
-                        new_wire = (delete_gate[1], delete_gate[0])
-                        distances.append((new_wire, 2))
-                        
-                        del gate_connections[delete_gate]
+                    del gate_connections[delete_gate]
+                
+                    longest_wire_length = 0
+                    # Select 2 longest wires and create them again
+                    for connection in gate_connections:
+                        wire_length = len(gate_connections[connection])
+                        if wire_length > longest_wire_length:
+                            longest_wire_length = wire_length
+                            delete_gate2 = connection
+                    
+                    new2 = (delete_gate2[1], delete_gate2[0])
+                    distances.append((new2, 2))
+                    
+                    del gate_connections[delete_gate2]
 
-                        deletewire = []
-                        # Delete blocking wire
-                        for i, item2 in enumerate(allwires):
-                            if item2.net == gate_net or item2.net == delete_gate:
-                                deletewire.append(allwires[i])
+                    deletewire = []
+                    # Delete blocking wire
+                    for i, item2 in enumerate(allwires):
+                        if item2.net == gate_net or item2.net == delete_gate or item2.net == delete_gate2:
+                            print("DELETEJUL")
+                            deletewire.append(allwires[i])
 
-                        for delete_wire in deletewire:
-                            allwires.remove(delete_wire)
-                        
-        newwires_counter += 1                
+                    for delete_wire in deletewire:
+                        print("REALDELETEJA")
+                        allwires.remove(delete_wire)
     
 print(gate_connections)
 print(len(gate_connections))

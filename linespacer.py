@@ -4,8 +4,6 @@ path.py
 Tom Kamstra, Izhar Hamer, Julia Linde
 
 Finds the optimal paths between the chips
-
-NOT WORKING, but with <7 layers constraint
 """
 from mpl_toolkits import mplot3d
 import numpy as np
@@ -67,9 +65,6 @@ count = 0
 
 # Saves all wires
 allwires = []
-
-# Defines maximum number of layers
-max_num_layers = 7
 
 # Connect gates with eachother, starting with smallest distance
 for chips in distances:
@@ -148,6 +143,7 @@ for chips in distances:
  
         # Append start coordinate to wire
         wires.append(coordinate)
+        print(coordinate)
         wire = classs.Wire(coordinate, connected_gate)
         allwires.append(wire)
         
@@ -159,13 +155,8 @@ for chips in distances:
                 # Check for other gates or other wires
                 if gate_connections:
                     (x_coordinate_start, z_coordinate_start) = change.change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, x_coordinate_start, -step_x, z_coordinate_start, 1)
-                    # Check if z-coordinate not greater than 7
-                    if z_coordinate_start > 7:
-                        z_coordinate_start = z_coordinate_start - 1
-                        y_coordinate_start = y_coordinate_start + step_y
-                    else:
-                        coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                        (z_coordinate_start, y_coordinate_start) = change.change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, z_coordinate_start, -1, y_coordinate_start, step_y)
+                    coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
+                    (z_coordinate_start, y_coordinate_start) = change.change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, z_coordinate_start, -1, y_coordinate_start, step_y)
                     coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                     # Coordinate changes 2 times in y-direction, so step_y is doubled
                     (y_coor_notrelevant, y_coordinate_start) = change.change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, y_coordinate_start, step_y, y_coordinate_start, (-2*step_y))
@@ -174,13 +165,8 @@ for chips in distances:
                 elif coordinate in gate_coordinates and coordinate != coordinate_end:
                     x_coordinate_start = x_coordinate_start - step_x
                     z_coordinate_start = z_coordinate_start + 1
-                    # Check if z-coordinate not greater than 7
-                    if z_coordinate_start > 7:
-                        z_coordinate_start = z_coordinate_start - 1
-                        x_coordinate_start = x_coordinate_start - step_x
-                    else:
-                        coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                        (z_coordinate_start, x_coordinate_start) = change.change_coor2(coordinate, wires, gate_coordinates, coordinate_end, z_coordinate_start, -1, x_coordinate_start, -step_x)
+                    coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
+                    (z_coordinate_start, x_coordinate_start) = change.change_coor2(coordinate, wires, gate_coordinates, coordinate_end, z_coordinate_start, -1, x_coordinate_start, -step_x)
                     coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                     (x_coordinate_start, y_coordinate_start) = change.change_coor2(coordinate, wires, gate_coordinates, coordinate_end, x_coordinate_start, step_x, y_coordinate_start, step_y)
                     coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
@@ -189,6 +175,7 @@ for chips in distances:
         
                 coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                 wires.append(coordinate)
+                print(coordinate)
                 wire = classs.Wire(coordinate, connected_gate)
                 allwires.append(wire)
             
@@ -223,6 +210,7 @@ for chips in distances:
          
                     coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                     wires.append(coordinate)
+                    print(coordinate)
                     wire = classs.Wire(coordinate, connected_gate)
                     allwires.append(wire)
                     
@@ -243,13 +231,8 @@ for chips in distances:
                except:
                    step_x = 0
                (y_coordinate_start, z_coordinate_start) = change.change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, y_coordinate_start, -step_y, z_coordinate_start, 1)
-               # Check if z-coordinate not greater than 7
-               if z_coordinate_start > 7:
-                   z_coordinate_start = z_coordinate_start - 1
-                   x_coordinate_start = x_coordinate_start + step_x
-               else:
-                   coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                   (z_coordinate_start, x_coordinate_start) = change.change_coor2(coordinate, wires, gate_coordinates, coordinate_end, z_coordinate_start, -1, x_coordinate_start, step_x)
+               coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
+               (z_coordinate_start, x_coordinate_start) = change.change_coor2(coordinate, wires, gate_coordinates, coordinate_end, z_coordinate_start, -1, x_coordinate_start, step_x)
                coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                (x_coor_notrelevant, x_coordinate_start) = change.change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, x_coordinate_start, step_x, x_coordinate_start, (-2*step_x))
                coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
@@ -257,13 +240,8 @@ for chips in distances:
            elif coordinate in gate_coordinates and coordinate != coordinate_end:
                y_coordinate_start = y_coordinate_start - step_y
                z_coordinate_start = z_coordinate_start + 1
-               # Check if z-coordinate not greater than 7
-               if z_coordinate_start > 7:
-                   z_coordinate_start = z_coordinate_start - 1
-                   x_coordinate_start = x_coordinate_start + step_x
-               else:
-                   coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
-                   (z_coordinate_start, x_coordinate_start) = change.change_coor2(coordinate, wires, gate_coordinates, coordinate_end, z_coordinate_start, -1, x_coordinate_start, step_x)
+               coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
+               (z_coordinate_start, x_coordinate_start) = change.change_coor2(coordinate, wires, gate_coordinates, coordinate_end, z_coordinate_start, -1, x_coordinate_start, step_x)
                coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                (x_coor_notrelevant, x_coordinate_start) = change.change_coor2(coordinate, wires, gate_coordinates, coordinate_end, x_coordinate_start, step_x, x_coordinate_start, (-2*step_x))
                coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
@@ -274,6 +252,7 @@ for chips in distances:
            
            coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
            wires.append(coordinate)
+           print(coordinate)
            wire = classs.Wire(coordinate, connected_gate)
            allwires.append(wire)
            
@@ -308,6 +287,7 @@ for chips in distances:
                                    
                    coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                    wires.append(coordinate)
+                   print(coordinate)
                    wire = classs.Wire(coordinate, connected_gate)
                    allwires.append(wire)
                    
@@ -444,67 +424,30 @@ for chips in distances:
                 
                     distances.append((new_net, 2))
                 
-                    longest_wire_length = 0
-                    # Select 2 longest wires and create them again
-                    for connection in gate_connections:
-                        wire_length = len(gate_connections[connection])
-                        if wire_length > longest_wire_length:
-                            longest_wire_length = wire_length
-                            delete_gate = connection
-                    
-                    new1 = (delete_gate[1], delete_gate[0])
-                    distances.append((new1, 2))
-                        
-                    del gate_connections[delete_gate]
-                
-                    longest_wire_length = 0
-                    # Select 2 longest wires and create them again
-                    for connection in gate_connections:
-                        wire_length = len(gate_connections[connection])
-                        if wire_length > longest_wire_length:
-                            longest_wire_length = wire_length
-                            delete_gate2 = connection
-                    
-                    new2 = (delete_gate2[1], delete_gate2[0])
-                    distances.append((new2, 2))
-                    
-                    del gate_connections[delete_gate2]
-                    
-                    longest_wire_length = 0
-                    # Select 2 longest wires and create them again
-                    for connection in gate_connections:
-                        wire_length = len(gate_connections[connection])
-                        if wire_length > longest_wire_length:
-                            longest_wire_length = wire_length
-                            delete_gate3 = connection
-                    
-                    new3 = (delete_gate3[1], delete_gate3[0])
-                    distances.append((new3, 2))
-                    
-                    del gate_connections[delete_gate3]
-                    
-                    longest_wire_length = 0
-                    # Select 2 longest wires and create them again
-                    for connection in gate_connections:
-                        wire_length = len(gate_connections[connection])
-                        if wire_length > longest_wire_length:
-                            longest_wire_length = wire_length
-                            delete_gate4 = connection
-                    
-                    new4 = (delete_gate4[1], delete_gate4[0])
-                    distances.append((new4, 2))
-                        
-                    del gate_connections[delete_gate4]
+                    # Repeat this 4 times
+                    for repeat in range(4):
+                        longest_wire_length = 0
+                        # Select longest wire and create again
+                        for connection in gate_connections:
+                            wire_length = len(gate_connections[connection])
+                            if wire_length > longest_wire_length:
+                                longest_wire_length = wire_length
+                                delete_gate = connection
+            
+                        new_wire = (delete_gate[1], delete_gate[0])
+                        distances.append((new_wire, 2))
+            
+                        del gate_connections[delete_gate]
 
-                    deletewire = []
-                    # Delete blocking wire
-                    for i, item2 in enumerate(allwires):
-                        if item2.net == gate_net or item2.net == delete_gate or item2.net == delete_gate2:
-                            deletewire.append(allwires[i])
+                        deletewire = []
+                        # Delete blocking wire
+                        for i, item2 in enumerate(allwires):
+                            if item2.net == gate_net or item2.net == delete_gate:
+                                deletewire.append(allwires[i])
 
-                    for delete_wire in deletewire:
-                        allwires.remove(delete_wire)
-
+                        for delete_wire in deletewire:
+                            allwires.remove(delete_wire)
+                            
 print(gate_connections)
 print(len(gate_connections))
 print("JOEJOE")
