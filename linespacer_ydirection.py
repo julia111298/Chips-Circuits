@@ -1,9 +1,10 @@
 """
-path.py
+linespacer_ydirection.py
 
 Tom Kamstra, Izhar Hamer, Julia Linde
 
-Finds the optimal paths between the chips based on distance in y direction.
+Finds the optimal paths between gates based on distance in y direction.
+Wires out of range are deleted.
 """
 from mpl_toolkits import mplot3d
 import numpy as np
@@ -64,8 +65,8 @@ count = 0
 # Saves all wires
 allwires = []
 
-# Defines maximum number of layers
-max_num_layers = 7
+# Define variable for deleted wires that are not created again
+minus_num_wires = 0
 
 # Defines number of wires that are created again after all wires are (partly) created
 newwires_counter = 2
@@ -420,16 +421,8 @@ for chips in distances:
     net = classs.Net(gate_start, gate_end)
     net.create_wires(wires)
     gate_connections.update({connected_gate: wires})
-    # if count > 54:
-   #      break
-
-    # if len(gate_connections) == len(netlist):
-   #      break
-    print("ALL WIRES")
-    print(allwires)
-    print(net)
     
-    if len(gate_connections) == len(netlist):
+    if len(gate_connections) == len(netlist) - minus_num_wires:
         # Check whether every wire reaches end gate
         for net in netlist:
             start_gate = int(net.gate_1)
@@ -454,7 +447,7 @@ for chips in distances:
     
                     distances.append((new_net, 2))
         
-                    # Repeat this number of newwires_counter times
+                    # Repeat this number 2 times
                     for repeat in range(2):
                         longest_wire_length = 0
                         # Select longest wire and create again
@@ -477,10 +470,33 @@ for chips in distances:
 
                         for delete_wire in deletewire:
                             allwires.remove(delete_wire)
-            
-        # Set maximum for a quarter of all wires that can be created again
-        if newwires_counter < 0.25*len(netlist):
-            newwires_counter += 1
+        
+        # Delete wires that are not within the grid
+        connections_list = list(gate_connections.items())
+
+        for index in connections_list:
+            wire = index[1]
+            gatenet = index[0]
+            for coord in wire:
+                x_coor = coord[0]
+                y_coor = coord[1]
+                z_coor = coord[2]
+                if x_coor < 0 or y_coor < 0 or z_coor < 0 or z_coor > 7:
+                    # Increase number of deleted wires
+                    minus_num_wires += 1
+
+                    # Delete wire from gate_connections dictionary
+                    del gate_connections[gatenet]
+
+                    deletewire = []
+                    # Delete wire from allwires list
+                    for i, item2 in enumerate(allwires):
+                        if item2.net == gatenet:
+                            deletewire.append(allwires[i])
+
+                    for delete_wire in deletewire:
+                        allwires.remove(delete_wire)
+                    break
     
 print(gate_connections)
 print(len(gate_connections))

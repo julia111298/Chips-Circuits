@@ -148,6 +148,7 @@ for chips in distances:
  
         # Append start coordinate to wire
         wires.append(coordinate)
+        print(coordinate)
         wire = classs.Wire(coordinate, connected_gate)
         allwires.append(wire)
         
@@ -158,9 +159,15 @@ for chips in distances:
                 coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                 # Check for other gates or other wires
                 if gate_connections:
+                    if z_coordinate_start > 0:
+                        x_coordinate_start = x_coordinate_start - step_x
+                        z_coordinate_start = z_coordinate_start - 1
+                        coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
+                        (x_coordinate_start, z_coordinate_start) = change.change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, x_coordinate_start, step_x, z_coordinate_start, 1)
+                        coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                     (x_coordinate_start, z_coordinate_start) = change.change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, x_coordinate_start, -step_x, z_coordinate_start, 1)
                     # Check if z-coordinate not greater than 7
-                    if z_coordinate_start > 7:
+                    if z_coordinate_start > max_num_layers:
                         z_coordinate_start = z_coordinate_start - 1
                         y_coordinate_start = y_coordinate_start + step_y
                     else:
@@ -175,7 +182,7 @@ for chips in distances:
                     x_coordinate_start = x_coordinate_start - step_x
                     z_coordinate_start = z_coordinate_start + 1
                     # Check if z-coordinate not greater than 7
-                    if z_coordinate_start > 7:
+                    if z_coordinate_start > max_num_layers:
                         z_coordinate_start = z_coordinate_start - 1
                         x_coordinate_start = x_coordinate_start - step_x
                     else:
@@ -189,6 +196,7 @@ for chips in distances:
         
                 coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                 wires.append(coordinate)
+                print(coordinate)
                 wire = classs.Wire(coordinate, connected_gate)
                 allwires.append(wire)
             
@@ -200,7 +208,7 @@ for chips in distances:
             
             # Change z-coordinate if x- and y-coordinates are same as those from end gate        
             if x_coordinate_start == x_coordinate_end and y_coordinate_start == y_coordinate_end:
-                while z_coordinate_start != z_coordinate_end:
+                while z_coordinate_start != z_coordinate_end and z_coordinate_start > 0:
                     z_coordinate_start = z_coordinate_start - 1
                     coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                     if gate_connections:
@@ -223,6 +231,7 @@ for chips in distances:
          
                     coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                     wires.append(coordinate)
+                    print(coordinate)
                     wire = classs.Wire(coordinate, connected_gate)
                     allwires.append(wire)
                     
@@ -242,9 +251,15 @@ for chips in distances:
                    step_x = step_x
                except:
                    step_x = 0
+               if z_coordinate_start > 0:
+                   y_coordinate_start = y_coordinate_start - step_y
+                   z_coordinate_start = z_coordinate_start - 1
+                   coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
+                   (y_coordinate_start, z_coordinate_start) = change.change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, y_coordinate_start, step_y, z_coordinate_start, 1)
+                   coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                (y_coordinate_start, z_coordinate_start) = change.change_coor(gate_connections, coordinate, gate_coordinates, wires, coordinate_end, y_coordinate_start, -step_y, z_coordinate_start, 1)
                # Check if z-coordinate not greater than 7
-               if z_coordinate_start > 7:
+               if z_coordinate_start > max_num_layers:
                    z_coordinate_start = z_coordinate_start - 1
                    x_coordinate_start = x_coordinate_start + step_x
                else:
@@ -258,7 +273,7 @@ for chips in distances:
                y_coordinate_start = y_coordinate_start - step_y
                z_coordinate_start = z_coordinate_start + 1
                # Check if z-coordinate not greater than 7
-               if z_coordinate_start > 7:
+               if z_coordinate_start > max_num_layers:
                    z_coordinate_start = z_coordinate_start - 1
                    x_coordinate_start = x_coordinate_start + step_x
                else:
@@ -274,6 +289,7 @@ for chips in distances:
            
            coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
            wires.append(coordinate)
+           print(coordinate)
            wire = classs.Wire(coordinate, connected_gate)
            allwires.append(wire)
            
@@ -285,7 +301,7 @@ for chips in distances:
            
            # Change z-coordinate if x- and y-coordinates are same as those from end gate
            if x_coordinate_start == x_coordinate_end and y_coordinate_start == y_coordinate_end:
-               while z_coordinate_start != z_coordinate_end:
+               while z_coordinate_start != z_coordinate_end and z_coordinate_start > 0:
                    z_coordinate_start = z_coordinate_start - 1
                    coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                    if gate_connections:
@@ -308,6 +324,7 @@ for chips in distances:
                                    
                    coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                    wires.append(coordinate)
+                   print(coordinate)
                    wire = classs.Wire(coordinate, connected_gate)
                    allwires.append(wire)
                    

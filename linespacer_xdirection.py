@@ -5,7 +5,7 @@ Tom Kamstra, Izhar Hamer, Julia Linde
 
 Finds the optimal paths between the chips
 
-28 wires within grid
+28 out of 30 wires within grid
 """
 from mpl_toolkits import mplot3d
 import numpy as np
@@ -66,8 +66,8 @@ count = 0
 # Saves all wires
 allwires = []
 
-# Defines maximum number of layers
-max_num_layers = 7
+# Define variable for deleted wires that are not created again
+minus_num_wires = 0
 
 # Connect gates with eachother, starting with smallest distance
 for chips in distances:
@@ -405,7 +405,7 @@ for chips in distances:
     net.create_wires(wires)
     gate_connections.update({connected_gate: wires})
     
-    if len(gate_connections) == len(netlist):
+    if len(gate_connections) == len(netlist) - minus_num_wires:
         # Check whether every wire reaches end gate
         for net in netlist:
             start_gate = int(net.gate_1)
@@ -454,6 +454,7 @@ for chips in distances:
                         for delete_wire in deletewire:
                             allwires.remove(delete_wire)
         
+        # Delete wires that are not within the grid
         connections_list = list(gate_connections.items())
                  
         for index in connections_list:
@@ -462,19 +463,18 @@ for chips in distances:
             for coord in wire:
                 x_coor = coord[0]
                 y_coor = coord[1]
-                if x_coor < 0 or y_coor < 0:
-                    print("Succ", gatenet)
-
-                    del gate_connections[gatenet]
- 
-                    wire_new = (gatenet[1], gatenet[0])
-                    print(wire_new)
-                    # distances.append((gatenet, 2))
+                z_coor = coord[2]
+                if x_coor < 0 or y_coor < 0 or z_coor < 0 or z_coor > 7:
+                    # Increase number of deleted wires
+                    minus_num_wires += 1
                     
+                    # Delete wire from gate_connections dictionary
+                    del gate_connections[gatenet]
+                
                     deletewire = []
-                    # Delete blocking wire
+                    # Delete wire from allwires list
                     for i, item2 in enumerate(allwires):
-                        if item2.net == key:
+                        if item2.net == gatenet:
                             deletewire.append(allwires[i])
 
                     for delete_wire in deletewire:
