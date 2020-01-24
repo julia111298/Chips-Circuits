@@ -1,5 +1,5 @@
 """
-path_workingnetlist1.py
+linespacer.py
 
 Tom Kamstra, Izhar Hamer, Julia Linde
 
@@ -9,18 +9,20 @@ Deletes wires that are out of range.
 from mpl_toolkits import mplot3d
 import numpy as np
 import matplotlib.pyplot as plt
-from code.classes import classes as classs
-from code.functions import delete as delete
-from code.functions import change_coordinates as change
+import sys
+sys.path.append("../code")
+from classes import classes as classs
+from functions import delete as delete
+from functions import change_coordinates as change
 import copy
 
 import csv
 
 # Create netlist by loading file in class
-netlist = classs.Netlist("data/netlist_1.csv").netlist
+netlist = classs.Netlist("../data/netlist_2.csv").netlist
 
 # Create list for gate coordinates
-gate_coordinates = classs.Gate_coordinate("data/pritn_1.csv").gate_coordinates
+gate_coordinates = classs.Gate_coordinate("../data/pritn_1.csv").gate_coordinates
 
 # Create dictionary for gate connections with corresponding shortest distance
 distances = {}
@@ -69,6 +71,9 @@ allwires = []
 
 # Define variable for deleted wires that are not created again
 minus_num_wires = 0
+
+# Define number for maximal number of layers
+max_num_layers = 7
 
 # Connect gates with eachother, starting with smallest distance
 for chips in distances:
@@ -147,7 +152,6 @@ for chips in distances:
  
         # Append start coordinate to wire
         wires.append(coordinate)
-        print(coordinate)
         wire = classs.Wire(coordinate, connected_gate)
         allwires.append(wire)
         
@@ -181,7 +185,6 @@ for chips in distances:
         
                 coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                 wires.append(coordinate)
-                print(coordinate)
                 wire = classs.Wire(coordinate, connected_gate)
                 allwires.append(wire)
             
@@ -216,7 +219,6 @@ for chips in distances:
          
                     coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                     wires.append(coordinate)
-                    print(coordinate)
                     wire = classs.Wire(coordinate, connected_gate)
                     allwires.append(wire)
                     
@@ -258,7 +260,6 @@ for chips in distances:
            
            coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
            wires.append(coordinate)
-           print(coordinate)
            wire = classs.Wire(coordinate, connected_gate)
            allwires.append(wire)
            
@@ -293,7 +294,6 @@ for chips in distances:
                                    
                    coordinate = [x_coordinate_start, y_coordinate_start, z_coordinate_start]
                    wires.append(coordinate)
-                   print(coordinate)
                    wire = classs.Wire(coordinate, connected_gate)
                    allwires.append(wire)
                    
@@ -371,10 +371,8 @@ for chips in distances:
             switch_variable = 1
         else: 
             checker += 1
-            print("CHECKER", checker)
         if checker > 200: 
             notcomplete += 1
-            print("NOTCOMPLETE", notcomplete)
             break
                
     count += 1         
@@ -439,6 +437,7 @@ for chips in distances:
                             longest_wire_length = wire_length
                             delete_gate = connection
         
+                    # Append deleted wire to distances in switched order
                     new_wire = (delete_gate[1], delete_gate[0])
                     distances.append((new_wire, 2))
         
@@ -463,15 +462,16 @@ for chips in distances:
                 x_coor = coord[0]
                 y_coor = coord[1]
                 z_coor = coord[2]
-                if x_coor < 0 or y_coor < 0 or z_coor < 0 or z_coor > 7:
+                if x_coor < 0 or y_coor < 0 or z_coor < 0 or z_coor > max_num_layers:
                     # Increase number of deleted wires
                     minus_num_wires += 1
                     
                     # Delete wire from gate_connections dictionary
                     del gate_connections[gatenet]
- 
-                    # wire_new = (gatenet[1], gatenet[0])
-                    # distances.append((wire_new, 2))
+                    
+                    # Append deleted wire to distances in switched order
+                    wire_new = (gatenet[1], gatenet[0])
+                    distances.append((wire_new, 2))
                     
                     deletewire = []
                     # Delete wire from allwires list
@@ -482,9 +482,38 @@ for chips in distances:
                     for delete_wire in deletewire:
                         allwires.remove(delete_wire)
                     break
+    
+    # Let script stop if running in forever loop
+    if len(distances) > 5*len(netlist):
+        # Delete wires that are not within the grid
+        connections_list = list(gate_connections.items())
+                 
+        for index in connections_list:
+            wire = index[1]
+            gatenet = index[0]
+            for coord in wire:
+                x_coor = coord[0]
+                y_coor = coord[1]
+                z_coor = coord[2]
+                if x_coor < 0 or y_coor < 0 or z_coor < 0 or z_coor > max_num_layers:
+                    # Increase number of deleted wires
+                    minus_num_wires += 1
+                    
+                    # Delete wire from gate_connections dictionary
+                    del gate_connections[gatenet]
+                
+                    deletewire = []
+                    # Delete wire from allwires list
+                    for i, item2 in enumerate(allwires):
+                        if item2.net == gatenet:
+                            deletewire.append(allwires[i])
 
-print(gate_connections)
-print(len(gate_connections))
+                    for delete_wire in deletewire:
+                        allwires.remove(delete_wire)
+                    break
+        break
+        
+print("NUMBER OF WIRES: ", len(gate_connections))
 
 length = 0
 # Calculate total length of wires
@@ -492,8 +521,7 @@ for key in gate_connections:
     wire = gate_connections[key]
     length = length + len(wire)
     
-print("TOTAL LENGTH")
-print(length)
+print("TOTAL LENGTH: ", length)
 
 def make_grid(layers, size):
     for i in range(layers): 
@@ -547,8 +575,7 @@ for keys in gate_connections:
         colourcounter = 0
     for i in range(len(allconnectionlist)):
         try:
-            print("LineFromTo", allconnectionlist[i], "To", allconnectionlist[i + 1])
-            # draw_line(allconnectionlist[i], allconnectionlist[i+1], colours[colourcounter] )
+            draw_line(allconnectionlist[i], allconnectionlist[i+1], colours[colourcounter] )
             plt.pause(0.000001)
         except: 
             break
