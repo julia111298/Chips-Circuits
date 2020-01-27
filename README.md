@@ -15,12 +15,12 @@ pip3 install -r requirements.txt
 ```
 
 ### Structuur
-De repository bestaat uit 3 belangrijke folders: code, data en linespacer.
+De repository bestaat uit drie belangrijke folders: code, data en linespacer.
 
 #### code
-In de folder "code" staat alle belangrijke code opgeslagen. Deze folder bestaat ook weer uit 4 belangrijke folders: algorithms, classes, functions en visualisation.
+In de folder "code" staat alle belangrijke code opgeslagen. Deze folder bestaat ook weer uit vier belangrijke folders: algorithms, classes, functions en visualisation.
 
-* algorithms: Hierin staan de codes voor een aantal verschillende algoritmes waarmee ons optimalisatieprobleem is getest.
+* algorithms: Hierin staan de codes voor een aantal verschillende algoritmes waarmee het optimalisatieprobleem is getest.
 * classes: Hierin staan de classes gedefinieerd die gebruikt worden om objecten mee op te slaan.
 * functions: Hierin zijn functies gedefinieerd die aangeroepen worden in de Python codes.
 * visualisation: Bevat een Python file die een plot creëert van de resultaten.
@@ -43,3 +43,4 @@ python linespacer.py
 * Izhar Hamer
 * Tom Kamstra
 * Julia Linde
+* Team: De mandarijntjes
