@@ -43,4 +43,8 @@ python linespacer.py
 * Izhar Hamer
 * Tom Kamstra
 * Julia Linde
+<<<<<<< HEAD
 * Team: De mandarijntjes
+=======
+* Team: De mandarijntjes
+>>>>>>> 98d533916e84eede72c489c63c6aac5995cdf320
