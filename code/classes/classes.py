@@ -1,6 +1,9 @@
 import csv
 
 class Wire():
+    """
+    Return net with gates and corresponding coordinates of the wire between gates.
+    """
     def __init__(self, coordinate, net):
         self.coordinate = coordinate
         self.net = net
@@ -12,6 +15,9 @@ class Wire():
         return f"{self.coordinate}, {self.net}"
 
 class Gate_coordinate():
+    """
+    Read in CSV file with gate coordinates and return list of coordinates.
+    """
     def __init__(self, gate_file):
         self.gate_coordinates = self.load_gates(gate_file)
     
@@ -31,6 +37,9 @@ class Gate_coordinate():
         return gate_coordinates 
 
 class Net():
+    """
+    Create wire between gates of specific net.
+    """
     def __init__(self, gate_1, gate_2):
         self.gate_1 = gate_1
         self.gate_2 = gate_2
@@ -46,6 +55,9 @@ class Net():
         return f"{self.gate_1}, {self.gate_2}, {self.wires}"
         
 class Netlist():
+    """
+    Read in CSV file with netlist and return list of connected gates in nets.
+    """
     def __init__(self, net_file):
         self.netlist = self.load_netlist(net_file)
     
